@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.app.mapper.MaterialMapper">
+
+	<!-- resultMapを定義 -->
+	<resultMap id="materialResult" type="Material">
+		<id property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="materialType" column="material_type" />
+		<result property="publisher" column="publisher" />
+		<result property="note" column="note" />
+	</resultMap>
+
+	<!-- 教材一覧 -->
+	<select id="selectAll" resultType="Material">
+		SELECT * FROM materials
+	</select>
+
+	<!-- 教材詳細 -->
+	<select id="selectById" parameterType="Integer"
+		resultMap="materialResult">
+		SELECT * FROM materials
+		WHERE id = #{id}
+	</select>
+
+	<!-- 教材追加 -->
+	<insert id="insert" parameterType="Material">
+		<!-- materials : id, name, material_type, publisher, note, -->
+		INSERT INTO materials (name, material_type, publisher, note)
+		VALUES
+		(#{name}, #{materialType}, #{publisher}, #{note})
+	</insert>
+
+	<!-- 教材編集 -->
+	<update id="update" parameterType="Material">
+		UPDATE materials
+		SET name =
+		#{name}, material_type = #{materialType}, publisher = #{publisher},
+		note = #{note}
+		WHERE id = #{id}
+	</update>
+
+
+</mapper>

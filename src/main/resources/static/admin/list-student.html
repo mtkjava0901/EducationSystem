@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../css/bootstrap.min.css" rel="stylesheet">
+<link href="../css/style.css" rel="stylesheet">
+<title>教材管理システム</title>
+</head>
+<body>
+<header>
+  <nav class="navbar navbar-light bg-light">
+    <div class="container">
+      <a class="navbar-brand" href="">教材管理システム</a>
+      <ul class="navbar-nav">
+        <li class="nav-item">山田太郎 [<a href="">ログアウト</a>]</li>
+      </ul>
+    </div>
+  </nav>
+</header>
+<div class="container">
+
+  <h1 class="my-4 h3">生徒リスト</h1>
+
+  <div class="row">
+    <div class="col">
+      <p>
+        <a href="add-student.html" class="btn btn-primary">生徒の追加</a>
+        <a href="list-material.html" class="btn btn-light">視聴覚教材リスト</a>
+      </p>
+      <table class="table table-bordered">
+        <tr>
+          <th>ログインID</th>
+          <th>氏名</th>
+          <th>生年月日</th>
+          <th>編集</th>
+          <th>削除</th>
+        </tr>
+        <tr>
+          <td>std1001</td>
+          <td>鈴木洋子</td>
+          <td>2001年12月18日</td>
+          <td><a href="edit-student.html" class="btn btn-warning btn-sm">編集</a></td>
+          <td><a href="" class="btn btn-danger btn-sm delete">削除</a></td>
+        </tr>
+        <tr>
+          <td>std1002</td>
+          <td>三沢信二</td>
+          <td>2002年11月09日</td>
+          <td><a href="edit-student.html" class="btn btn-warning btn-sm">編集</a></td>
+          <td><a href="" class="btn btn-danger btn-sm delete">削除</a></td>
+        </tr>
+        <tr>
+          <td>std1003</td>
+          <td>細川喜久子</td>
+          <td>2001年12月10日</td>
+          <td><a href="edit-student.html" class="btn btn-warning btn-sm">編集</a></td>
+          <td><a href="" class="btn btn-danger btn-sm delete">削除</a></td>
+        </tr>
+        <tr>
+          <td>std1004</td>
+          <td>桑野徹</td>
+          <td>2003年04月25日</td>
+          <td><a href="edit-student.html" class="btn btn-warning btn-sm">編集</a></td>
+          <td><a href="" class="btn btn-danger btn-sm delete">削除</a></td>
+        </tr>
+        <tr>
+          <td>std1005</td>
+          <td>佐々木敏子</td>
+          <td>2002年11月21日</td>
+          <td><a href="edit-student.html" class="btn btn-warning btn-sm">編集</a></td>
+          <td><a href="" class="btn btn-danger btn-sm delete">削除</a></td>
+        </tr>
+      </table>
+
+      <ul class="pagination">
+        <li class="page-item disabled"><a class="page-link" href="">&laquo;</a></li>
+        <li class="page-item active"><a class="page-link" href="">1</a></li>
+        <li class="page-item"><a class="page-link" href="">2</a></li>
+        <li class="page-item"><a class="page-link" href="">3</a></li>
+        <li class="page-item"><a class="page-link" href="">&raquo;</a></li>
+      </ul>
+    </div><!-- /.col- -->
+  </div><!-- /.row -->
+
+</div><!-- /.container -->
+<script src="../js/jquery-3.6.1.min.js"></script>
+<script src="../js/bootstrap.bundle.min.js"></script>
+<script src="../js/button-action.js"></script>
+</body>
+</html>
