@@ -3,24 +3,42 @@ package com.example.app.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.example.app.domain.Material;
 
 @Mapper
 public interface MaterialMapper {
-	
+
 	// 教材マッピング
-	
+	// throws Exception;
+
 	// 教材一覧
 	List<Material> selectAll();
-	
+
 	// 教材詳細
 	Material selectById(Integer id);
-	
-	// 教材追加
-	void insert (Material material);
-	
-	// 教材編集
-	void update (Material material);
 
+	// 教材詳細
+	Material selectByName(String name);
+
+	// 教材追加
+	void insert(Material material);
+
+	// 教材編集
+	void update(Material material);
+
+	// 教材削除(倫理削除)
+	void delete(Integer id);
+
+	// 同名が存在するか判定 名前で件数をカウント
+	int countByName(String name);
+
+	// 指定ID以外で同名が存在するか判定(編集時)
+	int countByNameExcludingId(@Param("name") String name,
+			@Param("id") Integer id);
 }
+
+// 教材倫理削除(statusを'DEL'に変更、安全に扱えるように)(未使用)
+// @Update("UPDATE materials SET status = 'DEL' WHERE id = #{id}")
+// int setChangeByStatus(@Param("id") Integer id);

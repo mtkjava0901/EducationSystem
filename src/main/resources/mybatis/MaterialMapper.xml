@@ -2,43 +2,90 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.app.mapper.MaterialMapper">
 
+	<!-- 結合SQLIDを設定(使い回し用) -->
+	<sql id="joinSelect">
+		SELECT
+		materials.id, materials.name, materials.publisher,
+		materials.note, materials.created, materials.status,
+		materials.material_type_id, material_types.name AS material_type_name
+		FROM materials
+		JOIN
+		material_types
+		ON materials.material_type_id =
+		material_types.id
+	</sql>
+
 	<!-- resultMapを定義 -->
-	<resultMap id="materialResult" type="Material">
-		<id property="id" column="id" />
-		<result property="name" column="name" />
-		<result property="materialType" column="material_type" />
-		<result property="publisher" column="publisher" />
-		<result property="note" column="note" />
+	<resultMap id="material" type="Material" autoMapping="true">
+		<association property="materialType"
+			javaType="MaterialType">
+			<id property="id" column="material_type_id" />
+			<result property="name" column="material_type_name" />
+		</association>
+
 	</resultMap>
 
 	<!-- 教材一覧 -->
-	<select id="selectAll" resultType="Material">
-		SELECT * FROM materials
+	<select id="selectAll" resultMap="material">
+		<include refid="joinSelect" />
+		WHERE materials.status = 'ACT'
 	</select>
 
 	<!-- 教材詳細 -->
-	<select id="selectById" parameterType="Integer"
-		resultMap="materialResult">
-		SELECT * FROM materials
-		WHERE id = #{id}
+	<select id="selectById" parameterType="int" resultMap="material">
+		<include refid="joinSelect" />
+		WHERE materials.id = #{id}
+	</select>
+
+	<select id="selectByName" parameterType="string"
+		resultMap="material">
+		<include refid="joinSelect" />
+		WHERE materials.name = #{name}
 	</select>
 
 	<!-- 教材追加 -->
-	<insert id="insert" parameterType="Material">
+	<insert id="insert" parameterType="material">
 		<!-- materials : id, name, material_type, publisher, note, -->
-		INSERT INTO materials (name, material_type, publisher, note)
+		INSERT INTO materials
+		(name, publisher, note, material_type_id, created)
 		VALUES
-		(#{name}, #{materialType}, #{publisher}, #{note})
+		(#{name}, #{publisher}, #{note}, #{materialType.id}, NOW())
 	</insert>
 
 	<!-- 教材編集 -->
-	<update id="update" parameterType="Material">
+	<update id="update" parameterType="material">
 		UPDATE materials
-		SET name =
-		#{name}, material_type = #{materialType}, publisher = #{publisher},
-		note = #{note}
+		SET 
+		name = #{name},
+		publisher = #{publisher},
+		note = #{note},
+		material_type_id = #{materialType.id}
 		WHERE id = #{id}
 	</update>
+	
+	<!-- 教材削除(倫理削除) -->
+	<update id="delete" parameterType="material">
+		UPDATE materials
+		SET status = 'DEL'
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 同名が存在するか判定 -->
+	<select id="countByName" resultType="int">
+		SELECT COUNT(*)
+		FROM materials
+		WHERE name = #{name}
+		AND status !='DEL'
+	</select>
+	
+	<!-- 指定ID以外で同名が存在するか判定(編集時) -->
+	<select id="countByNameExcludingId" resultType="int">
+		SELECT COUNT(*)
+		FROM materials
+		WHERE name = #{name}
+		AND id != #{id}
+		AND status != 'DEL'
+	</select>
 
 
 </mapper>

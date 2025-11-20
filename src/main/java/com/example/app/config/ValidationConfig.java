@@ -1,0 +1,48 @@
+package com.example.app.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.validation.Validator;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+@Configuration
+public class ValidationConfig implements WebMvcConfigurer {
+
+	// バリデーションメッセージのカスタマイズ
+	@Override
+	public Validator getValidator() {
+		var validator = new LocalValidatorFactoryBean();
+		validator.setValidationMessageSource(messageSource());
+		return validator;
+	}
+
+	@Bean
+	ResourceBundleMessageSource messageSource() {
+		var messageSource = new ResourceBundleMessageSource();
+		messageSource.setBasename("validation");
+		return messageSource;
+	}
+	
+	/*
+	// 認証用フィルタの有効化
+	@Bean
+	FilterRegistrationBean<AuthFilter> authFilter() {
+		var bean = new FilterRegistrationBean<AuthFilter>(new AuthFilter());
+		bean.addUrlPatterns("/members/*");
+		bean.addUrlPatterns("/news/*");
+		return bean;
+	}
+	*/
+	
+	/*
+	// uploadsフォルダをリソースとして利用可能にする
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry.addResourceHandler("/uploads/**")
+		.addResourceLocations("file:///C:/Users/zd2T03/uploads/");
+	}
+	*/
+
+}
