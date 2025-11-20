@@ -31,4 +31,10 @@ public interface MaterialService {
 	// 指定ID以外で同名が存在するか判定(編集時)
 	boolean existsByNameExcludingId(String name, Integer id);
 
+	// データの全件数を取得
+	int getTotalPages(int numPerPage);
+
+	// ページごとのデータを取得
+	List<Material> getMaterialListByPage(int page, int numPerPage);
+
 }

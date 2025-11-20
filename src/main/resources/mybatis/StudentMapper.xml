@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.app.mapper.StudentMapper">
+
+	<!-- 結合SQLを設定 -->
+	<sql id="studentSelect">
+		SELECT
+		student.id,
+		student.name,
+		student.birthday,
+		student.login_id,
+		student.login_pass,
+		student.status
+		FROM students student
+	</sql>
+
+	<!-- resultMapを定義 -->
+	<resultMap id="student" type="Student" autoMapping="true" />
+
+	<!-- 生徒一覧 -->
+	<select id="selectAll" resultMap="student">
+		<include refid="studentSelect" />
+		WHERE student.status = 'ACT'
+		ORDER BY student.id ASC
+	</select>
+
+	<!-- 生徒ID取得 -->
+	<select id="selectById" resultMap="student">
+		<include refid="studentSelect" />
+		WHERE student.id = #{id}
+	</select>
+	
+
+	<!-- 生徒追加 -->
+	<insert id="insert" parameterType="student">
+		INSERT INTO students
+		(name, birthday, login_id, login_pass)
+		VALUES
+		(#{name}, #{birthday}, #{loginId}, #{loginPass})
+	</insert>
+
+	<!-- 生徒編集 -->
+	<update id="update" parameterType="student">
+		UPDATE students
+		SET
+		name = #{name},
+		birthday = #{birthday},
+		login_id = #{loginId},
+		login_pass = #{loginPass}
+		WHERE id = #{id}
+	</update>
+	
+	<!-- データの全件数を取得 -->
+	<select id="count" resultType="long">
+		SELECT COUNT(*) FROM materials
+	</select>
+	
+	<!-- ページごとのデータを取得 -->
+	<select id="selectLimitedStudents" resultMap="student">
+		<include refid="studentSelect" />
+		LIMIT #{offset}, #{limit}
+	</select>
+
+</mapper>

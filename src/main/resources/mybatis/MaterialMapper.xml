@@ -47,37 +47,42 @@
 	<insert id="insert" parameterType="material">
 		<!-- materials : id, name, material_type, publisher, note, -->
 		INSERT INTO materials
-		(name, publisher, note, material_type_id, created)
+		(name, publisher, note, material_type_id,
+		created)
 		VALUES
-		(#{name}, #{publisher}, #{note}, #{materialType.id}, NOW())
+		(#{name}, #{publisher}, #{note}, #{materialType.id},
+		NOW())
 	</insert>
 
 	<!-- 教材編集 -->
 	<update id="update" parameterType="material">
 		UPDATE materials
-		SET 
+		SET
 		name = #{name},
 		publisher = #{publisher},
 		note = #{note},
-		material_type_id = #{materialType.id}
+		material_type_id =
+		#{materialType.id}
 		WHERE id = #{id}
 	</update>
-	
+
 	<!-- 教材削除(倫理削除) -->
 	<update id="delete" parameterType="material">
 		UPDATE materials
-		SET status = 'DEL'
+		SET status =
+		'DEL'
 		WHERE id = #{id}
 	</update>
-	
+
 	<!-- 同名が存在するか判定 -->
 	<select id="countByName" resultType="int">
 		SELECT COUNT(*)
-		FROM materials
+		FROM
+		materials
 		WHERE name = #{name}
 		AND status !='DEL'
 	</select>
-	
+
 	<!-- 指定ID以外で同名が存在するか判定(編集時) -->
 	<select id="countByNameExcludingId" resultType="int">
 		SELECT COUNT(*)
@@ -87,5 +92,15 @@
 		AND status != 'DEL'
 	</select>
 
+	<!-- データの全件数を取得 -->
+	<select id="count" resultType="long">
+		SELECT COUNT(*) FROM materials
+	</select>
+
+	<!-- ページごとのデータを取得 -->
+	<select id="selectLimitedMaterials" resultMap="material">
+		<include refid="joinSelect" />
+		LIMIT #{offset}, #{limit}
+	</select>
 
 </mapper>

@@ -1,0 +1,27 @@
+package com.example.app.service;
+
+import java.util.List;
+
+import com.example.app.domain.Student;
+
+public interface StudentService {
+
+	// 生徒一覧
+	List<Student> getStudentList();
+	
+	// 生徒ID取得
+	Student getStudentById(Integer id);
+	
+	// データの全件数を取得
+	int getTotalPages(int numPerPage);
+	
+	// ページごとのデータを取得
+	List<Student> getStudentListByPage(int page, int numPerPage);
+
+	// 生徒追加
+	void addStudent(Student student);
+
+	// 生徒編集
+	void editStudent(Student student);
+
+}
