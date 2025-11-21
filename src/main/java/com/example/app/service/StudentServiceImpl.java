@@ -41,6 +41,12 @@ public class StudentServiceImpl implements StudentService {
 		mapper.update(student);
 	}
 
+	// 生徒倫理削除
+	@Override
+	public void deleteStudent(Integer id) {
+		mapper.delete(id);
+	}
+
 	// データの全件数を取得
 	@Override
 	public int getTotalPages(int numPerPage) {

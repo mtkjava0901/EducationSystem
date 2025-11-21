@@ -52,7 +52,7 @@
 						<td>[[ ${#temporals.format(student.birthday, 'yyyy年MM月dd日')} ]]</td>
 						<td><a th:href="@{/admin/student/edit/{id}(id=${student.id})}"
 								class="btn btn-warning btn-sm">編集</a></td>
-						<td><a href="" class="btn btn-danger btn-sm delete">削除</a></td>
+						<td><a th:href="@{/admin/student/delete/{id}(id=${student.id})}" class="btn btn-danger btn-sm delete">削除</a></td>
 					</tr>
 				</table>
 				<!-- 生徒テーブル -->

@@ -11,7 +11,8 @@
 		student.login_id,
 		student.login_pass,
 		student.status
-		FROM students student
+		FROM students
+		student
 	</sql>
 
 	<!-- resultMapを定義 -->
@@ -29,35 +30,54 @@
 		<include refid="studentSelect" />
 		WHERE student.id = #{id}
 	</select>
-	
+
 
 	<!-- 生徒追加 -->
 	<insert id="insert" parameterType="student">
 		INSERT INTO students
-		(name, birthday, login_id, login_pass)
+		(name,
+		birthday, login_id, login_pass)
 		VALUES
-		(#{name}, #{birthday}, #{loginId}, #{loginPass})
+		(#{name}, #{birthday},
+		#{loginId}, #{loginPass})
 	</insert>
 
 	<!-- 生徒編集 -->
 	<update id="update" parameterType="student">
 		UPDATE students
 		SET
-		name = #{name},
+		name =
+		#{name},
 		birthday = #{birthday},
 		login_id = #{loginId},
-		login_pass = #{loginPass}
+		login_pass =
+		#{loginPass}
+		WHERE id = #{id}
+	</update>
+
+	<!-- 生徒倫理削除 -->
+	<update id="delete" parameterType="student">
+		UPDATE students
+		SET status = 'DEL'
 		WHERE id = #{id}
 	</update>
 	
+	<!-- 同ログインIDが存在するか判定 -->
+	
+	<!-- 指定ID以外で同ログインIDが存在するか判定 -->
+	
+	
 	<!-- データの全件数を取得 -->
 	<select id="count" resultType="long">
-		SELECT COUNT(*) FROM materials
+		SELECT COUNT(*) FROM students
+		WHERE status = 'ACT'
 	</select>
-	
+
 	<!-- ページごとのデータを取得 -->
 	<select id="selectLimitedStudents" resultMap="student">
 		<include refid="studentSelect" />
+		WHERE student.status = 'ACT'
+		ORDER BY student.id ASC
 		LIMIT #{offset}, #{limit}
 	</select>
 

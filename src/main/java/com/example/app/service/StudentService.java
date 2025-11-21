@@ -23,5 +23,8 @@ public interface StudentService {
 
 	// 生徒編集
 	void editStudent(Student student);
+	
+	// 生徒倫理削除
+	void deleteStudent(Integer id);
 
 }
