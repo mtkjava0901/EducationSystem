@@ -13,14 +13,14 @@ public class Material {
 	// フィールド 教材カラム
 	private Integer id; // id番号
 	
-	@NotBlank
-	@Size(max = 30)
+	@NotBlank(message="{material.name.NotBlank}")
+	@Size(max = 30, message="{material.name.Size}")
 	private String name; // 教材名
 	
-	@Size(max = 30)
+	@Size(max = 30, message="{material.publisher.Size}")
 	private String publisher; // 出版元
 	
-	@Size(max = 100)
+	@Size(max = 100, message="{material.note.Size}")
 	private String note; // 備考欄
 	
 	private MaterialType materialType; // 教材の種類

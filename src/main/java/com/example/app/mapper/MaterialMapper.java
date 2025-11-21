@@ -11,7 +11,7 @@ import com.example.app.domain.Material;
 public interface MaterialMapper {
 
 	// 教材マッピング
-	// throws Exception;
+	// throws Exception;(一旦使わない)
 
 	// 教材一覧
 	List<Material> selectAll();
@@ -37,6 +37,14 @@ public interface MaterialMapper {
 	// 指定ID以外で同名が存在するか判定(編集時)
 	int countByNameExcludingId(@Param("name") String name,
 			@Param("id") Integer id);
+
+	// データの全件数を取得
+	Long count();
+
+	// ページごとのデータを取得
+	List<Material> selectLimitedMaterials
+	(@Param("offset") int offset,
+			@Param("limit") int limit);
 }
 
 // 教材倫理削除(statusを'DEL'に変更、安全に扱えるように)(未使用)

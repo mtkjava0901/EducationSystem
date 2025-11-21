@@ -67,4 +67,18 @@ public class MaterialServiceImpl implements MaterialService {
 		return mapper.countByNameExcludingId(name, id) > 0;
 	}
 
+	// データの全件数を取得
+	@Override
+	public int getTotalPages(int numPerPage) {
+		double totalNum = (double) mapper.count();
+		return (int) Math.ceil(totalNum / numPerPage);
+	}
+
+	// ページごとのデータを取得
+	@Override
+	public List<Material> getMaterialListByPage(int page, int numPerPage) {
+		int offset = numPerPage * (page - 1);
+		return mapper.selectLimitedMaterials(offset, numPerPage);
+	}
+
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.app.domain.Material;
@@ -23,13 +24,21 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/admin/material")
 public class MaterialController {
 
+	// 1ページの表示数
+	private final int NUM_PER_PAGE = 5;
+
 	private final MaterialService service;
 
-	// 教材一覧(post無し)
+	// 教材一覧(post無し) (ページネーション付与)
 	@GetMapping("/list")
-	public String showList(Model model) {
-		List<Material> materialList = service.getMaterialList();
-		model.addAttribute("list", materialList);
+	public String showList(
+			@RequestParam(name = "page", defaultValue = "1") Integer page,
+			Model model) {
+		// 1ページ文の教材のみ取得
+		List<Material> materials = service.getMaterialListByPage(page, NUM_PER_PAGE);
+		model.addAttribute("list", materials);
+		model.addAttribute("page", page);
+		model.addAttribute("totalPages", service.getTotalPages(NUM_PER_PAGE));
 		return "admin/material/list";
 	}
 
