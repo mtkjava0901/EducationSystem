@@ -26,7 +26,7 @@ public class Student {
 	private String loginId; // ログインID(重複不可)
 	
 	@NotBlank(message="{student.loginPass.NotBlank}")
-	private String loginPass; // パスワード(BCrypt使用)
+	private String loginPass; // パスワード:pass(BCrypt使用)
 	
 	private String status; // 状態('ACT'or'DEL')
 
