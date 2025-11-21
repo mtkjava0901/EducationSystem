@@ -61,4 +61,16 @@ public class StudentServiceImpl implements StudentService {
 		return mapper.selectLimitedStudents(offset, numPerPage);
 	}
 
+	// 同ログインIDが存在するか判定
+	@Override
+	public boolean existsByLoginId(String loginId) {
+		return mapper.CountByLoginId(loginId) > 0;
+	}
+
+	// 指定ID以外で同ログインIDが存在するか判定(編集時)
+	@Override
+	public boolean existsByLoginIdExcludingId(String loginId, Integer id) {
+		return mapper.countByLoginIdExcludingId(loginId, id) > 0;
+	}
+
 }

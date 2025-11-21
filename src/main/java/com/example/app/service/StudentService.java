@@ -26,5 +26,11 @@ public interface StudentService {
 	
 	// 生徒倫理削除
 	void deleteStudent(Integer id);
+	
+	// 同ログインIDが存在するか判定
+	boolean existsByLoginId(String loginId);
+	
+	// 指定ID以外で同ログインIDが存在するか判定
+	boolean existsByLoginIdExcludingId(String loginId, Integer id);
 
 }

@@ -2,8 +2,11 @@ package com.example.app.controller;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,15 +49,27 @@ public class StudentController {
 		return "admin/student/save";
 	}
 
-	/*
 	@PostMapping("/add")
-	public String addPostStudent(RedirectAttributes rd,
+	public String addPostStudent(
+			@Valid Student student,
+			Errors errors,
+			RedirectAttributes rd,
 			Model model) {
+		// studentのloginIdが空白でなければ・DBなどに同名が既に存在するか
+		if (!student.getLoginId().isBlank()) {
+			if (service.existsByLoginId(student.getLoginId())) {
+				// 既にあればerrorsにloginIdフィールドエラーを追加
+				errors.rejectValue("loginId", "error.loginid.notunique");
+			}
+		}
+		if (errors.hasErrors()) {
+			model.addAttribute("title", "生徒の追加");
+			return "admin/student/save";
+		}
 		service.addStudent(student);
 		rd.addFlashAttribute("statusMessage", "生徒を追加しました。");
 		return "redirect:/admin/student/list";
 	}
-	*/
 
 	// 生徒編集（post有り）
 	@GetMapping("/edit/{id}")
@@ -65,8 +80,34 @@ public class StudentController {
 		return "admin/student/save";
 	}
 
-	// 生徒倫理削除(post有り)
+	@PostMapping("/edit/{id}")
+	public String editPostStudent(
+			@PathVariable Integer id,
+			@Valid Student student,
+			Errors errors,
+			RedirectAttributes rd,
+			Model model) {
+		// 編集画面に来た時元の名前を取得
+		String originalStudentName = service.getStudentById(id).getLoginId();
 
+		if (!student.getLoginId().isBlank()) {
+			if (!originalStudentName.equals(student.getLoginId()) && service.existsByLoginId(student.getLoginId())) {
+				errors.rejectValue("loginId", "error.loginid.notunique");
+			}
+		}
+		if (errors.hasErrors()) {
+			model.addAttribute("title", "生徒の編集");
+			// これがあるとDBから新しくstudentを取得してmodelに入れてしまう
+			// model.addAttribute("student", service.getStudentById(id));
+			return "admin/student/save";
+		}
+		student.setId(id);
+		service.editStudent(student);
+		rd.addFlashAttribute("statusMessage", "生徒を編集しました。");
+		return "redirect:/admin/student/list";
+	}
+
+	// 生徒倫理削除(post有り)
 	@GetMapping("/delete/{id}")
 	public String deleteGetStudent(
 			@PathVariable Integer id,

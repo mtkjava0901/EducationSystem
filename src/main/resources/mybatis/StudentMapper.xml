@@ -63,9 +63,22 @@
 	</update>
 	
 	<!-- 同ログインIDが存在するか判定 -->
+	<select id="CountByLoginId" resultType="int">
+		SELECT COUNT(*)
+		FROM
+		students
+		WHERE login_id = #{loginId}
+		AND status !='DEL'
+	</select>
 	
-	<!-- 指定ID以外で同ログインIDが存在するか判定 -->
-	
+	<!-- 指定ID以外で同ログインIDが存在するか判定(編集時) -->
+	<select id="countByLoginIdExcludingId" resultType="int">
+		SELECT COUNT(*)
+		FROM students
+		WHERE login_id = #{loginId}
+		AND id != #{id}
+		AND status !='DEL'
+	</select>
 	
 	<!-- データの全件数を取得 -->
 	<select id="count" resultType="long">
