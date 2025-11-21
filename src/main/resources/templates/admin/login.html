@@ -1,46 +1,55 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="../css/bootstrap.min.css" rel="stylesheet">
-<link href="../css/style.css" rel="stylesheet">
-<title>教材管理システム</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+	<link th:href="@{/css/style.css}" rel="stylesheet">
+	<title>教材管理システム</title>
 </head>
+
 <body id="loginPage">
-<div class="container">
+	<div class="container">
 
-  <div class="row justify-content-center">
-    <div class="col col-md-6 mt-4">
+		<div class="row justify-content-center">
+			<div class="col col-md-6 mt-4">
 
-      <div class="panel panel-default text-center">
-        <h1 class="h3">管理者ログイン</h1>
-        <div class="panel-body">
+				<div class="panel panel-default text-center">
+					<h1 class="h3">管理者ログイン</h1>
+					<div class="panel-body">
 
-          <div class="alert alert-danger">
-              ログインIDまたはパスワードが正しくありません。
-          </div>
+						<!-- フラッシュメッセージ欄 -->
+						<div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+							<span th:utext="${errorMessage}"></span>
+						</div>
+						<!-- フラッシュメッセージ欄 -->
 
-          <form action="" method="post">
-            <div class="mb-3">
-              <input type="text" placeholder="ログインID" class="form-control">
-            </div>
-            <div class="mb-3">
-              <input type="password" placeholder="パスワード" class="form-control">
-            </div>
-            <div class="mb-3">
-              <input type="submit" class="btn btn-primary w-100" value="ログイン">
-            </div>
-          </form>
+						<form action="" method="post" th:object="${admin}">
+							<div class="mb-3">
+								<input type="text" th:field="*{loginId}" placeholder="ログインID" class="form-control">
+								<div class="text-danger" 
+								th:if="${#fields.hasErrors('loginId')}"></div>
+							</div>
+							<div class="mb-3">
+								<input type="password" th:field="*{loginPass}" placeholder="パスワード" class="form-control">
+								<div class="text-danger"
+								th:if="${#fields.hasErrors('loginPass')}"></div>
+							</div>
+							<div class="mb-3">
+								<input type="submit" class="btn btn-primary w-100" value="ログイン">
+							</div>
+						</form>
 
-        </div>
-      </div>
+					</div>
+				</div>
 
-    </div><!-- /.col- -->
-  </div><!-- /.row -->
+			</div><!-- /.col- -->
+		</div><!-- /.row -->
 
-</div><!-- /.container -->
-<script src="../js/jquery-3.6.1.min.js"></script>
-<script src="../js/bootstrap.bundle.min.js"></script>
+	</div><!-- /.container -->
+	<script th:src="@{/js/jquery-3.6.1.min.js}"></script>
+	<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 </body>
+
 </html>
