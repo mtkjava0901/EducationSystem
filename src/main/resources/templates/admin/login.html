@@ -25,16 +25,14 @@
 						</div>
 						<!-- フラッシュメッセージ欄 -->
 
-						<form action="" method="post" th:object="${admin}">
+						<form method="post" th:object="${admin}">
 							<div class="mb-3">
 								<input type="text" th:field="*{loginId}" placeholder="ログインID" class="form-control">
-								<div class="text-danger" 
-								th:if="${#fields.hasErrors('loginId')}"></div>
+								<div class="text-danger" ></div>
 							</div>
 							<div class="mb-3">
 								<input type="password" th:field="*{loginPass}" placeholder="パスワード" class="form-control">
-								<div class="text-danger"
-								th:if="${#fields.hasErrors('loginPass')}"></div>
+								<div class="text-danger"  ></div>
 							</div>
 							<div class="mb-3">
 								<input type="submit" class="btn btn-primary w-100" value="ログイン">

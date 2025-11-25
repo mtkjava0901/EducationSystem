@@ -1,14 +1,11 @@
 package com.example.app.config;
 
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import com.example.app.filter.AuthFilter;
 
 @Configuration
 public class ValidationConfig implements WebMvcConfigurer {
@@ -28,7 +25,7 @@ public class ValidationConfig implements WebMvcConfigurer {
 		return messageSource;
 	}
 	
-	
+/*	
 	// 認証用フィルタの有効化
 	@Bean
 	FilterRegistrationBean<AuthFilter> authFilter() {
@@ -37,7 +34,7 @@ public class ValidationConfig implements WebMvcConfigurer {
 		// bean.addUrlPatterns("/rental/*");
 		return bean;
 	}
-	
+*/	
 	
 	/*
 	// uploadsフォルダをリソースとして利用可能にする
