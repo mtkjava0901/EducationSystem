@@ -40,5 +40,8 @@ public interface StudentMapper {
 	// ページごとのデータを取得
 	List<Student> selectLimitedStudents(@Param("offset") int offset,
 			@Param("limit") int limit);
+	
+	// 生徒ログインID選択
+	Student selectByLoginId(String loginId);
 
 }
