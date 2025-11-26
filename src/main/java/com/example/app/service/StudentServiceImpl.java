@@ -77,7 +77,7 @@ public class StudentServiceImpl implements StudentService {
 	// パスワード認証
 	@Override
 	public boolean isCorrectIdAndPassword(String loginId, String loginPass) {
-		// 
+		// ↓これが上手く働いていない？
 		Student student = mapper.selectByLoginId(loginId);
 		// 
 		if (student == null) return false;
