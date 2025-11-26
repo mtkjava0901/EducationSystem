@@ -55,11 +55,9 @@ public class AdminLoginController {
 			}
 		}
 		*/
-		// ここから削除予定
 		if (!service.authenticateAdmin(admin, errors)) {
 			return "admin/login";
 		}
-		// ここまで削除予定
 		
 		// 成功したら逆側のセッションを破棄
 		session.removeAttribute("student");
