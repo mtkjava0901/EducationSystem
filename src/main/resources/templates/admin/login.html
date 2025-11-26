@@ -19,19 +19,31 @@
 					<h1 class="h3">管理者ログイン</h1>
 					<div class="panel-body">
 
-						<!-- フラッシュメッセージ欄 -->
-						<div th:if="${errorMessage}" class="alert alert-danger" role="alert">
-							<span th:utext="${errorMessage}"></span>
-						</div>
-						<!-- フラッシュメッセージ欄 -->
+						<form th:action="@{/admin/login}" th:object="${admin}" method="post">
 
-						<form th:action="@{/admin/login}" method="post" th:object="${admin}">
-							<div class="mb-3">
-								<input type="text" th:field="*{loginId}" placeholder="ログインID" class="form-control">
+							<!-- 上部エラー表示 -->
+							<div th:if="${#fields.hasErrors('*')} or ${loginError != null}" class="alert alert-danger">
+								<ul class="m-0 p-0 list-unstyled">
+									<!-- フィールドごとの必須入力エラー -->
+									<li th:each="err : ${#fields.errors('loginId')}" th:text="${err}"
+										th:if="${loginError == null}"></li>
+									<li th:each="err : ${#fields.errors('loginPass')}" th:text="${err}"
+										th:if="${loginError == null}"></li>
+									<!-- 認証エラー -->
+									<li th:if="${loginError != null}" th:text="${loginError}"></li>
+								</ul>
 							</div>
+
+							<!-- ログインID -->
 							<div class="mb-3">
-								<input type="password" th:field="*{loginPass}" placeholder="パスワード" class="form-control">
+								<input type="text" th:field="*{loginId}" class="form-control" placeholder="ログインID">
 							</div>
+
+							<!-- パスワード -->
+							<div class="mb-3">
+								<input type="password" th:field="*{loginPass}" class="form-control" placeholder="パスワード">
+							</div>
+
 							<div class="mb-3">
 								<input type="submit" class="btn btn-primary w-100" value="ログイン">
 							</div>

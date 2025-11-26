@@ -21,15 +21,15 @@ public class LoginServiceImpl implements LoginService {
 		String loginId = admin.getLoginId();
 		String loginPass = admin.getLoginPass();
 
-		// 必須チェック
-		if (loginId == null || loginId.isBlank()) {
-			errors.rejectValue("loginId", "error.required",
-					"ログインIDは必須項目です。");
-		}
-		if (loginPass == null || loginPass.isBlank()) {
-			errors.rejectValue("loginPass", "error.required",
-					"パスワードは必須項目です。");
-		}
+		// 必須チェック(※一旦NotBlankに任せる)
+		// if (loginId == null || loginId.isBlank()) {
+		// 	errors.rejectValue("loginId", "error.required",
+		// 			"ログインIDは必須項目です。");
+		// }
+		// if (loginPass == null || loginPass.isBlank()) {
+		// 	errors.rejectValue("loginPass", "error.required",
+		// 			"パスワードは必須項目です。");
+		// }
 
 		// 必須チェックにエラーがある場合は認証エラーは追加しない
 		if (errors.hasErrors()) {
