@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.app.domain.Admin;
 import com.example.app.service.LoginService;
@@ -63,5 +64,13 @@ public class AdminLoginController {
 		session.removeAttribute("student");
 		session.setAttribute("admin", admin);
 		return "redirect:/admin/material/list";
+	}
+	
+	@GetMapping("/admin/logout")
+	public String logout(RedirectAttributes rd) {
+		// セッションを破棄し、トップページへ遷移
+		session.invalidate();
+		rd.addFlashAttribute("", "");
+		return "redirect:/admin/login";
 	}
 }

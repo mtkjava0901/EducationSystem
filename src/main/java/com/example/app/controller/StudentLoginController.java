@@ -55,14 +55,31 @@ public class StudentLoginController {
 			return "login";
 		}
 		*/
+
+		// ChatGPT
 		if (!service.authenticateStudent(student, errors)) {
+			if (errors.hasGlobalErrors()) {
+				model.addAttribute("loginError", errors.getGlobalErrors().get(0).getDefaultMessage());
+			}
 			return "login";
 		}
+
+		// if (!service.authenticateStudent(student, errors)) {
+		// 	return "login";
+		// }
 
 		// 成功したら逆側のセッションを破棄
 		session.removeAttribute("admin");
 		session.setAttribute("student", student);
 		return "redirect:/rental";
+	}
+
+	// ログアウト
+	@GetMapping("/logout")
+	public String logout() {
+		// セッションを破棄してトップページへ遷移
+		session.invalidate();
+		return "redirect:/login";
 	}
 
 	// 教材貸し出しページ
