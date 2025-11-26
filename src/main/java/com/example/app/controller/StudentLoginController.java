@@ -26,7 +26,7 @@ public class StudentLoginController {
 	public String showStudentLogin(
 			Student student,
 			Model model) {
-		// 管理者セッションが存在する場合は破棄して生徒ログインページへ遷移
+		// 管理者セッションが存在する場合は破棄して生徒ログインページへ遷移(未)
 		if (session.getAttribute("admin") != null) {
 			session.removeAttribute("admin");
 		}
@@ -42,7 +42,7 @@ public class StudentLoginController {
 			@Valid Student student,
 			Errors errors,
 			Model model) {
-
+		System.out.println(errors);
 		/*
 		if (!service.authenticateStudent(student, errors)) {
 			if (errors.hasErrors()) {
@@ -56,17 +56,9 @@ public class StudentLoginController {
 		}
 		*/
 
-		// ChatGPT
 		if (!service.authenticateStudent(student, errors)) {
-			if (errors.hasGlobalErrors()) {
-				model.addAttribute("loginError", errors.getGlobalErrors().get(0).getDefaultMessage());
-			}
 			return "login";
 		}
-
-		// if (!service.authenticateStudent(student, errors)) {
-		// 	return "login";
-		// }
 
 		// 成功したら逆側のセッションを破棄
 		session.removeAttribute("admin");

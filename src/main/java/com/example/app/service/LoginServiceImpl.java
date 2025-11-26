@@ -21,15 +21,7 @@ public class LoginServiceImpl implements LoginService {
 		String loginId = admin.getLoginId();
 		String loginPass = admin.getLoginPass();
 
-		// 必須チェック(※一旦NotBlankに任せる)
-		// if (loginId == null || loginId.isBlank()) {
-		// 	errors.rejectValue("loginId", "error.required",
-		// 			"ログインIDは必須項目です。");
-		// }
-		// if (loginPass == null || loginPass.isBlank()) {
-		// 	errors.rejectValue("loginPass", "error.required",
-		// 			"パスワードは必須項目です。");
-		// }
+		// 必須チェック(NotBlankに任せる)
 
 		// 必須チェックにエラーがある場合は認証エラーは追加しない
 		if (errors.hasErrors()) {
@@ -60,20 +52,39 @@ public class LoginServiceImpl implements LoginService {
 		String loginId = student.getLoginId();
 		String loginPass = student.getLoginPass();
 
-		if (loginId == null || loginId.isBlank() || loginPass == null || loginPass.isBlank()) {
-			errors.rejectValue("loginId", "error.incorrect_id_password",
-					"ログインIDまたはパスワードが正しくありません。");
+		// 必須チェック(NotBlankに任せる)
+
+		// 必須チェックにエラーがある場合は認証エラーは追加しない
+		if (errors.hasErrors()) {
 			return false;
 		}
 
+		// 認証チェック
 		boolean authenticated = studentService.isCorrectIdAndPassword(loginId, loginPass);
 		if (!authenticated) {
-			errors.rejectValue("loginId", "error.incorrect_id_password",
+			System.out.println("AAAA");
+			rejectIfNotExists(errors, "loginId", "error.incorrect_id_password",
 					"ログインIDまたはパスワードが正しくありません。");
 		}
 		return authenticated;
 	}
 }
+/*
+if(loginId==null||loginId.isBlank()||loginPass==null||loginPass.isBlank())
+
+{
+	errors.rejectValue("loginId", "error.incorrect_id_password",
+			"ログインIDまたはパスワードが正しくありません。");
+	return false;
+}
+
+boolean authenticated = studentService.isCorrectIdAndPassword(loginId, loginPass);if(!authenticated)
+{
+	errors.rejectValue("loginId", "error.incorrect_id_password",
+			"ログインIDまたはパスワードが正しくありません。");
+}return authenticated;
+}}
+*/
 
 /*
 }

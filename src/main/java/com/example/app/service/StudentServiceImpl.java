@@ -77,7 +77,9 @@ public class StudentServiceImpl implements StudentService {
 	// パスワード認証
 	@Override
 	public boolean isCorrectIdAndPassword(String loginId, String loginPass) {
+		// 
 		Student student = mapper.selectByLoginId(loginId);
+		// 
 		if (student == null) return false;
 		return BCrypt.checkpw(loginPass, student.getLoginPass());
 	}

@@ -27,7 +27,7 @@ public class AdminLoginController {
 	public String showAdminLogin(
 			Admin admin,
 			Model model) {
-		// 生徒セッションが存在する場合は破棄して管理者ログインページへ遷移
+		// 生徒セッションが存在する場合は破棄して管理者ログインページへ遷移(未)
 		if (session.getAttribute("student") != null) {
 			session.removeAttribute("student");
 		}
@@ -43,6 +43,7 @@ public class AdminLoginController {
 			@Valid Admin admin,
 			Errors errors,
 			Model model) {
+		System.out.println(errors);
 		/*
 		// 認証が失敗した場合
 		if (!service.authenticateAdmin(admin, errors)) {
@@ -70,7 +71,7 @@ public class AdminLoginController {
 	public String logout(RedirectAttributes rd) {
 		// セッションを破棄し、トップページへ遷移
 		session.invalidate();
-		rd.addFlashAttribute("", "");
+		rd.addFlashAttribute("loginMessage", "ログアウトしました。");
 		return "redirect:/admin/login";
 	}
 }
