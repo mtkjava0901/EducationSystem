@@ -22,7 +22,7 @@ public class Student {
 
 	@NotBlank(message="{student.loginId.NotBlank}")
 	@Size(max = 30, message="{student.loginId.Size}")
-	// +ユニークな教材名か？(Validation.properties)
+	// +ユニークな名か？(Validation.properties)
 	private String loginId; // ログインID(重複不可)
 	
 	@NotBlank(message="{student.loginPass.NotBlank}")
