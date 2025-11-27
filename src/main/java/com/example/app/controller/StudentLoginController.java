@@ -9,6 +9,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.app.domain.Student;
 import com.example.app.domain.StudentLoginForm;
@@ -67,9 +68,10 @@ public class StudentLoginController {
 
 	// ログアウト
 	@GetMapping("/logout")
-	public String logout() {
+	public String logout(RedirectAttributes rd) {
 		// セッションを破棄してトップページへ遷移
 		session.invalidate();
+		rd.addFlashAttribute("loginMessage", "ログアウトしました。");
 		return "redirect:/login";
 	}
 

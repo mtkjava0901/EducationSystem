@@ -29,4 +29,9 @@ public class AdminServiceImpl implements AdminService {
 		return (admin != null) ? admin.getLoginPass() : null;
 	}
 
+	@Override
+	public Admin findByLoginId(String loginId) {
+		return mapper.findByLoginId(loginId);
+	}
+
 }

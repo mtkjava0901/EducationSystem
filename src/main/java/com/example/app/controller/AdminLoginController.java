@@ -7,10 +7,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.app.domain.Admin;
+import com.example.app.domain.AdminLoginForm;
 import com.example.app.service.LoginService;
 
 import lombok.RequiredArgsConstructor;
@@ -25,8 +27,13 @@ public class AdminLoginController {
 	// 管理者ログイン(post有り)
 	@GetMapping("/admin/login")
 	public String showAdminLogin(
-			Admin admin,
 			Model model) {
+		
+		// loginFormをモデルに追加
+		if (!model.containsAttribute("loginForm")) {
+			model.addAttribute("loginForm", new AdminLoginForm());
+		}
+		
 		// 生徒セッションが存在する場合は破棄して管理者ログインページへ遷移(未)
 		if (session.getAttribute("student") != null) {
 			session.removeAttribute("student");
@@ -40,24 +47,16 @@ public class AdminLoginController {
 
 	@PostMapping("/admin/login")
 	public String adminLogin(
-			@Valid Admin admin,
+			@Valid
+			@ModelAttribute("loginForm")
+			AdminLoginForm form,
 			Errors errors,
 			Model model) {
-		System.out.println(errors);
-		/*
-		// 認証が失敗した場合
-		if (!service.authenticateAdmin(admin, errors)) {
-			// バリデーションまたはログイン失敗のメッセージをまとめる
-			if (errors.hasErrors()) {
-				String errorMsg = errors.getAllErrors().stream()
-						.map(DefaultMessageSourceResolvable::getDefaultMessage)
-						.collect(Collectors.joining("<br>"));
-				rd.addFlashAttribute("errorMessage", errorMsg);
-				return "redirect:/admin/login";
-			}
-		}
-		*/
-		if (!service.authenticateAdmin(admin, errors)) {
+		// System.out.println(errors);
+		
+		Admin admin = service.authenticateAdmin(form.getLoginId(), form.getLoginPass(), errors);
+		
+		if (errors.hasErrors()) {
 			return "admin/login";
 		}
 		

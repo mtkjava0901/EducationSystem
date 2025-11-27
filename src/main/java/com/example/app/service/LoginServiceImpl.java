@@ -17,9 +17,9 @@ public class LoginServiceImpl implements LoginService {
 
 	// Admin認証
 	@Override
-	public Admin authenticateAdmin(Admin admin, Errors errors) {
-		String loginId = admin.getLoginId();
-		String loginPass = admin.getLoginPass();
+	public Admin authenticateAdmin(String loginId, String loginPass, Errors errors) {
+		//String loginId = admin.getLoginId();
+		//String loginPass = admin.getLoginPass();
 
 		// 必須チェック(NotBlankに任せる)
 
@@ -27,26 +27,39 @@ public class LoginServiceImpl implements LoginService {
 		if (errors.hasErrors()) {
 			return null;
 		}
-		
-		// 認証チェック
-		boolean authenticated = adminService.isCorrectIdAndPassword(loginId, loginPass);
-		if (!authenticated) {
-			rejectIfNotExists(errors, "loginId", "error.incorrect_id_password",
+
+		// DBからloginIdでAdminを取得
+		Admin dbAdmin = adminService.findByLoginId(loginId);
+
+		// loginIdが存在しない場合
+		if (dbAdmin == null) {
+			errors.rejectValue("loginId", "error.incorrect_id_password",
 					"ログインIDまたはパスワードが正しくありません。");
 			return null;
 		}
-		return authenticated;
+
+		// 認証チェック
+		boolean authenticated = adminService.isCorrectIdAndPassword(loginId, loginPass);
+		if (!authenticated) {
+			errors.rejectValue("loginId", "error.incorrect_id_password",
+					"ログインIDまたはパスワードが正しくありません。");
+			return null;
+		}
+		// 認証成功(Adminを返す)
+		return dbAdmin;
 	}
 
-	// 重複登録防止ヘルパー
-	private void rejectIfNotExists(Errors errors, String field, String code, String defaultMessage) {
-		boolean alreadyExists = errors.getFieldErrors(field).stream()
-				.anyMatch(fe -> code.equals(fe.getCode()));
-		if (!alreadyExists) {
-			errors.rejectValue(field, code, defaultMessage);
+	/*
+		// 重複登録防止ヘルパー
+		private void rejectIfNotExists(Errors errors, String field, String code, String defaultMessage) {
+			boolean alreadyExists = errors.getFieldErrors(field).stream()
+					.anyMatch(fe -> code.equals(fe.getCode()));
+			if (!alreadyExists) {
+				errors.rejectValue(field, code, defaultMessage);
+			}
 		}
-	}
-	
+	*/
+
 	// Student認証
 	@Override
 	public Student authenticateStudent(String loginId, String loginPass, Errors errors) {
@@ -62,14 +75,14 @@ public class LoginServiceImpl implements LoginService {
 
 		// DBからloginIdでStudentを取得
 		Student dbStudent = studentService.findByLoginId(loginId);
-		
+
 		// ログインIDが存在しない
 		if (dbStudent == null) {
 			errors.rejectValue("loginId", "error.incorrect_id_password",
 					"ログインIDまたはパスワードが正しくありません。");
 			return null;
 		}
-		
+
 		// パスワードチェック
 		boolean authenticated = studentService.isCorrectIdAndPassword(loginId, loginPass);
 		if (!authenticated) {

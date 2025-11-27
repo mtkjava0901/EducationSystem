@@ -14,7 +14,7 @@ public interface LoginService {
 	 * @return 認証成功ならtrue
 	 */
 	
-	Admin authenticateAdmin(Admin admin, Errors erros);
+	Admin authenticateAdmin(String loginId, String loginPass, Errors erros);
 	
 	/*
 	 * 生徒ログイン認証

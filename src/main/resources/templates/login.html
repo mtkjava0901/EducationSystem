@@ -19,6 +19,11 @@
 					<h1 class="h3">ログイン</h1>
 					<div class="panel-body">
 
+						<!-- ログアウトメッセージ -->
+						<div th:if="${loginMessage != null}" class="alert alert-success">
+							<span th:text="${loginMessage}"></span>
+						</div>
+
 						<form th:action="@{/login}" th:object="${loginForm}" method="post">
 
 							<!-- 上部エラー表示 -->

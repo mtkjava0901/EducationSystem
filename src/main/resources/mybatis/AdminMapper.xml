@@ -7,5 +7,12 @@
 		FROM admins
 		WHERE login_id = #{loginId}
 	</select>
+	
+	<select id="findByLoginId" resultType="Admin">
+		SELECT *
+		FROM admins
+		WHERE login_id = #{loginId}
+		LIMIT 1
+	</select>
 
 </mapper>

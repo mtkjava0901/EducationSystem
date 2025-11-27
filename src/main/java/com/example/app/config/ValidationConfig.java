@@ -25,16 +25,16 @@ public class ValidationConfig implements WebMvcConfigurer {
 		return messageSource;
 	}
 	
-/*	
+	/*
 	// 認証用フィルタの有効化
 	@Bean
 	FilterRegistrationBean<AuthFilter> authFilter() {
 		var bean = new FilterRegistrationBean<AuthFilter>(new AuthFilter());
 		bean.addUrlPatterns("/admin/*");
-		// bean.addUrlPatterns("/rental/*");
+		bean.addUrlPatterns("/rental/*");
 		return bean;
 	}
-*/	
+	*/
 	
 	/*
 	// uploadsフォルダをリソースとして利用可能にする

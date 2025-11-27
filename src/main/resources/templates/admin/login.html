@@ -19,13 +19,13 @@
 					<h1 class="h3">管理者ログイン</h1>
 					<div class="panel-body">
 
-						<form th:action="@{/admin/login}" th:object="${admin}" method="post">
+						<!-- ログアウトメッセージ -->
+						<div th:if="${loginMessage != null}" class="alert alert-success">
+							<span th:text="${loginMessage}"></span>
+						</div>
 
-							<!-- フラッシュメッセージ表示 -->
-							<div th:if="${loginMessage}" class="alert alert-success">
-							    <p th:text="${loginMessage}"></p>
-							</div>
-							
+						<form th:action="@{/admin/login}" th:object="${loginForm}" method="post">
+
 							<!-- 上部エラー表示 -->
 							<div th:if="${#fields.hasErrors('*')} or ${loginError != null}" class="alert alert-danger">
 								<ul class="m-0 p-0 list-unstyled">
