@@ -32,5 +32,15 @@ public interface StudentService {
 	
 	// 指定ID以外で同ログインIDが存在するか判定
 	boolean existsByLoginIdExcludingId(String loginId, Integer id);
+	
+	// パスワード認証
+	public boolean isCorrectIdAndPassword(String loginId, String loginPass);
+	
+	// BCrypt.checkpw
+	String getPasswordHashByLoginId(String loginId);
+	
+	// DBのStudentを1件取得、パスワードが一致するかチェック
+	Student findByLoginId(String loginId);
+
 
 }

@@ -1,7 +1,9 @@
 package com.example.app.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 import org.springframework.stereotype.Controller;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.app.domain.Admin;
 import com.example.app.domain.Student;
 import com.example.app.service.StudentService;
 
@@ -28,6 +31,7 @@ public class StudentController {
 	private final int NUM_PER_PAGE = 5;
 
 	private final StudentService service;
+	private final HttpSession session;
 
 	// 生徒一覧（post無し）
 	@GetMapping("/list")
@@ -35,6 +39,17 @@ public class StudentController {
 			@RequestParam(name = "page", defaultValue = "1") Integer page,
 			Model model) {
 		List<Student> students = service.getStudentListByPage(page, NUM_PER_PAGE);
+		// Null安全性担保
+		if (students == null) {
+			students = new ArrayList<>();
+		}
+
+		// セッションからAdminユーザー取得
+		Admin admin = (Admin) session.getAttribute("admin");
+		if (admin != null) {
+			model.addAttribute("username", admin.getName()); // 名前を渡す
+		}
+
 		model.addAttribute("list", students);
 		model.addAttribute("page", page);
 		model.addAttribute("totalPages", service.getTotalPages(NUM_PER_PAGE));
@@ -44,6 +59,13 @@ public class StudentController {
 	// 生徒追加（post有り）
 	@GetMapping("/add")
 	public String addGetStudent(Model model) {
+
+		// セッションからAdminユーザー取得
+		Admin admin = (Admin) session.getAttribute("admin");
+		if (admin != null) {
+			model.addAttribute("username", admin.getName()); // 名前を渡す
+		}
+
 		model.addAttribute("title", "生徒の追加");
 		model.addAttribute("student", new Student());
 		return "admin/student/save";
@@ -75,6 +97,13 @@ public class StudentController {
 	@GetMapping("/edit/{id}")
 	public String editGetStudent(
 			@PathVariable Integer id, Model model) {
+
+		// セッションからAdminユーザー取得
+		Admin admin = (Admin) session.getAttribute("admin");
+		if (admin != null) {
+			model.addAttribute("username", admin.getName()); // 名前を渡す
+		}
+
 		model.addAttribute("title", "生徒の編集");
 		model.addAttribute("student", service.getStudentById(id));
 		return "admin/student/save";

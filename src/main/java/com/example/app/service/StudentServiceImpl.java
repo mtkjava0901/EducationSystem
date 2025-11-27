@@ -2,6 +2,7 @@ package com.example.app.service;
 
 import java.util.List;
 
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,6 +72,29 @@ public class StudentServiceImpl implements StudentService {
 	@Override
 	public boolean existsByLoginIdExcludingId(String loginId, Integer id) {
 		return mapper.countByLoginIdExcludingId(loginId, id) > 0;
+	}
+
+	// パスワード認証
+	@Override
+	public boolean isCorrectIdAndPassword(String loginId, String loginPass) {
+		// ↓これが上手く働いていない？(11/27修正中)
+		Student student = mapper.findByLoginId(loginId);
+
+		if (student == null)
+			return false;
+		return BCrypt.checkpw(loginPass, student.getLoginPass());
+	}
+
+	// DBのStudentを1件取得、パスワードが一致するかチェック
+	public Student findByLoginId(String loginId) {
+		return mapper.findByLoginId(loginId);
+	}
+
+	// BCrypt.checkpw
+	@Override
+	public String getPasswordHashByLoginId(String loginId) {
+		Student student = mapper.selectByLoginId(loginId);
+		return (student != null) ? student.getLoginPass() : null;
 	}
 
 }

@@ -1,7 +1,9 @@
 package com.example.app.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 import org.springframework.stereotype.Controller;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.app.domain.Admin;
 import com.example.app.domain.Material;
 import com.example.app.service.MaterialService;
 
@@ -28,14 +31,40 @@ public class MaterialController {
 	private final int NUM_PER_PAGE = 5;
 
 	private final MaterialService service;
+	private final HttpSession session;
 
 	// 教材一覧(post無し) (ページネーション付与)
+	/*
+		@GetMapping("/list")
+		public String showList(
+				@RequestParam(name = "page", defaultValue = "1") Integer page,
+				Model model) {
+			// 1ページ文の教材のみ取得
+			List<Material> materials = service.getMaterialListByPage(page, NUM_PER_PAGE);
+			model.addAttribute("list", materials);
+			model.addAttribute("page", page);
+			model.addAttribute("totalPages", service.getTotalPages(NUM_PER_PAGE));
+			return "admin/material/list";
+		}
+	*/
+
 	@GetMapping("/list")
 	public String showList(
 			@RequestParam(name = "page", defaultValue = "1") Integer page,
 			Model model) {
 		// 1ページ文の教材のみ取得
 		List<Material> materials = service.getMaterialListByPage(page, NUM_PER_PAGE);
+		// Null安全性担保
+		if (materials == null) {
+			materials = new ArrayList<>();
+		}
+
+		// セッションからAdminユーザー取得
+		Admin admin = (Admin) session.getAttribute("admin");
+		if (admin != null) {
+			model.addAttribute("username", admin.getName()); // 名前を渡す
+		}
+
 		model.addAttribute("list", materials);
 		model.addAttribute("page", page);
 		model.addAttribute("totalPages", service.getTotalPages(NUM_PER_PAGE));
@@ -46,6 +75,13 @@ public class MaterialController {
 	@GetMapping("/show/{id}")
 	public String showDetail(
 			@PathVariable Integer id, Model model) {
+
+		// セッションからAdminユーザー取得
+		Admin admin = (Admin) session.getAttribute("admin");
+		if (admin != null) {
+			model.addAttribute("username", admin.getName()); // 名前を渡す
+		}
+
 		model.addAttribute("material", service.getMaterialById(id));
 		return "admin/material/show";
 	}
@@ -53,6 +89,13 @@ public class MaterialController {
 	// 教材追加(post有り)
 	@GetMapping("/add")
 	public String addGetMaterial(Model model) {
+
+		// セッションからAdminユーザー取得
+		Admin admin = (Admin) session.getAttribute("admin");
+		if (admin != null) {
+			model.addAttribute("username", admin.getName()); // 名前を渡す
+		}
+
 		model.addAttribute("title", "視聴覚教材の追加");
 		model.addAttribute("material", new Material());
 		model.addAttribute("type", service.getMaterialTypeList());
@@ -87,6 +130,13 @@ public class MaterialController {
 	@GetMapping("/edit/{id}")
 	public String editGetMaterial(
 			@PathVariable Integer id, Model model) {
+
+		// セッションからAdminユーザー取得
+		Admin admin = (Admin) session.getAttribute("admin");
+		if (admin != null) {
+			model.addAttribute("username", admin.getName()); // 名前を渡す
+		}
+
 		model.addAttribute("title", "視聴覚教材の編集");
 		model.addAttribute("material", service.getMaterialById(id));
 		model.addAttribute("type", service.getMaterialTypeList());

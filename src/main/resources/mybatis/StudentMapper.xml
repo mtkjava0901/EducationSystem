@@ -58,10 +58,11 @@
 	<!-- 生徒倫理削除 -->
 	<update id="delete" parameterType="student">
 		UPDATE students
-		SET status = 'DEL'
+		SET status =
+		'DEL'
 		WHERE id = #{id}
 	</update>
-	
+
 	<!-- 同ログインIDが存在するか判定 -->
 	<select id="CountByLoginId" resultType="int">
 		SELECT COUNT(*)
@@ -70,16 +71,18 @@
 		WHERE login_id = #{loginId}
 		AND status !='DEL'
 	</select>
-	
+
 	<!-- 指定ID以外で同ログインIDが存在するか判定(編集時) -->
 	<select id="countByLoginIdExcludingId" resultType="int">
-		SELECT COUNT(*)
+		SELECT
+		COUNT(*)
 		FROM students
 		WHERE login_id = #{loginId}
 		AND id != #{id}
-		AND status !='DEL'
+		AND
+		status !='DEL'
 	</select>
-	
+
 	<!-- データの全件数を取得 -->
 	<select id="count" resultType="long">
 		SELECT COUNT(*) FROM students
@@ -91,7 +94,26 @@
 		<include refid="studentSelect" />
 		WHERE student.status = 'ACT'
 		ORDER BY student.id ASC
-		LIMIT #{offset}, #{limit}
+		LIMIT #{offset},
+		#{limit}
+	</select>
+
+	<!-- ログイン用IDで取得 -->
+	<select id="selectByLoginId" resultMap="student"
+		parameterType="string">
+		SELECT *
+		FROM students
+		WHERE login_id = #{loginId}
+		AND status ='ACT'
+	</select>
+	
+	<!-- DBのStudentを1件取得、パスワードが一致するかチェック -->
+	<select id="findByLoginId" resultType="Student">
+		SELECT *
+		FROM students
+		WHERE login_id = #{loginId}
+		AND status = 'ACT'
+		LIMIT 1
 	</select>
 
 </mapper>
