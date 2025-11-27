@@ -98,11 +98,22 @@
 		#{limit}
 	</select>
 
-	<!-- 生徒ログインID選択 -->
-	<select id="selectByLoginId" resultMap="student">
+	<!-- ログイン用IDで取得 -->
+	<select id="selectByLoginId" resultMap="student"
+		parameterType="string">
 		SELECT *
 		FROM students
 		WHERE login_id = #{loginId}
+		AND status ='ACT'
+	</select>
+	
+	<!-- DBのStudentを1件取得、パスワードが一致するかチェック -->
+	<select id="findByLoginId" resultType="Student">
+		SELECT *
+		FROM students
+		WHERE login_id = #{loginId}
+		AND status = 'ACT'
+		LIMIT 1
 	</select>
 
 </mapper>

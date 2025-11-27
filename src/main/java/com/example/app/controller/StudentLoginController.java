@@ -7,9 +7,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.example.app.domain.Student;
+import com.example.app.domain.StudentLoginForm;
 import com.example.app.service.LoginService;
 
 import lombok.RequiredArgsConstructor;
@@ -24,8 +26,13 @@ public class StudentLoginController {
 	// 生徒ログイン(post有り)
 	@GetMapping("/login")
 	public String showStudentLogin(
-			Student student,
 			Model model) {
+		
+		// loginFormをモデルに追加
+		if (!model.containsAttribute("loginForm")) {
+			model.addAttribute("loginForm", new StudentLoginForm());
+		}
+		
 		// 管理者セッションが存在する場合は破棄して生徒ログインページへ遷移(未)
 		if (session.getAttribute("admin") != null) {
 			session.removeAttribute("admin");
@@ -39,24 +46,16 @@ public class StudentLoginController {
 
 	@PostMapping("/login")
 	public String studentLogin(
-			@Valid Student student,
+			@Valid 
+			@ModelAttribute("loginForm")
+			StudentLoginForm form,
 			Errors errors,
 			Model model) {
-		System.out.println(errors);
-		/*
-		if (!service.authenticateStudent(student, errors)) {
-			if (errors.hasErrors()) {
-				String errorMsg = errors.getAllErrors().stream()
-						.map(e -> e.getDefaultMessage())
-						.reduce((a, b) -> a + " / " + b)
-						.orElse("ログインエラー");
-				model.addAttribute("errorMessage", errorMsg);
-			}
-			return "login";
-		}
-		*/
+		// System.out.println(errors);
 
-		if (!service.authenticateStudent(student, errors)) {
+		Student student = service.authenticateStudent(form.getLoginId(), form.getLoginPass(), errors);
+		
+		if (errors.hasErrors()) {
 			return "login";
 		}
 

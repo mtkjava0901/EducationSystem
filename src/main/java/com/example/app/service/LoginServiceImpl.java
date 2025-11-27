@@ -17,7 +17,7 @@ public class LoginServiceImpl implements LoginService {
 
 	// Admin認証
 	@Override
-	public boolean authenticateAdmin(Admin admin, Errors errors) {
+	public Admin authenticateAdmin(Admin admin, Errors errors) {
 		String loginId = admin.getLoginId();
 		String loginPass = admin.getLoginPass();
 
@@ -25,14 +25,15 @@ public class LoginServiceImpl implements LoginService {
 
 		// 必須チェックにエラーがある場合は認証エラーは追加しない
 		if (errors.hasErrors()) {
-			return false;
+			return null;
 		}
-
+		
 		// 認証チェック
 		boolean authenticated = adminService.isCorrectIdAndPassword(loginId, loginPass);
 		if (!authenticated) {
 			rejectIfNotExists(errors, "loginId", "error.incorrect_id_password",
 					"ログインIDまたはパスワードが正しくありません。");
+			return null;
 		}
 		return authenticated;
 	}
@@ -45,28 +46,38 @@ public class LoginServiceImpl implements LoginService {
 			errors.rejectValue(field, code, defaultMessage);
 		}
 	}
-
+	
 	// Student認証
 	@Override
-	public boolean authenticateStudent(Student student, Errors errors) {
-		String loginId = student.getLoginId();
-		String loginPass = student.getLoginPass();
+	public Student authenticateStudent(String loginId, String loginPass, Errors errors) {
+		//String loginId = student.getLoginId();
+		//String loginPass = student.getLoginPass();
 
 		// 必須チェック(NotBlankに任せる)
 
 		// 必須チェックにエラーがある場合は認証エラーは追加しない
 		if (errors.hasErrors()) {
-			return false;
+			return null;
 		}
 
-		// 認証チェック
+		// DBからloginIdでStudentを取得
+		Student dbStudent = studentService.findByLoginId(loginId);
+		
+		// ログインIDが存在しない
+		if (dbStudent == null) {
+			errors.rejectValue("loginId", "error.incorrect_id_password",
+					"ログインIDまたはパスワードが正しくありません。");
+			return null;
+		}
+		
+		// パスワードチェック
 		boolean authenticated = studentService.isCorrectIdAndPassword(loginId, loginPass);
 		if (!authenticated) {
-			System.out.println("AAAA");
-			rejectIfNotExists(errors, "loginId", "error.incorrect_id_password",
+			errors.rejectValue("loginId", "error.incorrect_id_password",
 					"ログインIDまたはパスワードが正しくありません。");
+			return null;
 		}
-		return authenticated;
+		return dbStudent;
 	}
 }
 /*

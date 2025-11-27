@@ -19,7 +19,7 @@
 					<h1 class="h3">ログイン</h1>
 					<div class="panel-body">
 
-						<form th:action="@{/login}" th:object="${student}" method="post">
+						<form th:action="@{/login}" th:object="${loginForm}" method="post">
 
 							<!-- 上部エラー表示 -->
 							<div th:if="${#fields.hasErrors('*')} or ${loginError != null}" class="alert alert-danger">

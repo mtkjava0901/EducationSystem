@@ -14,7 +14,7 @@ public interface LoginService {
 	 * @return 認証成功ならtrue
 	 */
 	
-	boolean authenticateAdmin(Admin admin, Errors erros);
+	Admin authenticateAdmin(Admin admin, Errors erros);
 	
 	/*
 	 * 生徒ログイン認証
@@ -23,6 +23,6 @@ public interface LoginService {
 	 * @return 認証成功ならtrue
 	 */
 	
-	boolean authenticateStudent(Student student, Errors erros);
+	Student authenticateStudent(String loginId, String loginPass, Errors errors);	
 
 }

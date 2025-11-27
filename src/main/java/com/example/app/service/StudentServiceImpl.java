@@ -77,11 +77,17 @@ public class StudentServiceImpl implements StudentService {
 	// パスワード認証
 	@Override
 	public boolean isCorrectIdAndPassword(String loginId, String loginPass) {
-		// ↓これが上手く働いていない？
-		Student student = mapper.selectByLoginId(loginId);
-		// 
-		if (student == null) return false;
+		// ↓これが上手く働いていない？(11/27修正中)
+		Student student = mapper.findByLoginId(loginId);
+
+		if (student == null)
+			return false;
 		return BCrypt.checkpw(loginPass, student.getLoginPass());
+	}
+
+	// DBのStudentを1件取得、パスワードが一致するかチェック
+	public Student findByLoginId(String loginId) {
+		return mapper.findByLoginId(loginId);
 	}
 
 	// BCrypt.checkpw

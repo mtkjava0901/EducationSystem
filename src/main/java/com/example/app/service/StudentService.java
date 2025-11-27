@@ -38,5 +38,9 @@ public interface StudentService {
 	
 	// BCrypt.checkpw
 	String getPasswordHashByLoginId(String loginId);
+	
+	// DBのStudentを1件取得、パスワードが一致するかチェック
+	Student findByLoginId(String loginId);
+
 
 }
