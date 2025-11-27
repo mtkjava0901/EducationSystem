@@ -19,7 +19,7 @@ public interface RentalRecordMapper {
 	void insert(RentalRecord record);
 
 	// 返却日時の更新
-	void updateReturnTime(RentalRecord record);
+	void updateReturn(RentalRecord record);
 
 	// 削除
 	void delete(Integer id);
