@@ -28,12 +28,12 @@ public class StudentLoginController {
 	@GetMapping("/login")
 	public String showStudentLogin(
 			Model model) {
-		
+
 		// loginFormをモデルに追加
 		if (!model.containsAttribute("loginForm")) {
 			model.addAttribute("loginForm", new StudentLoginForm());
 		}
-		
+
 		// 管理者セッションが存在する場合は破棄して生徒ログインページへ遷移(未)
 		if (session.getAttribute("admin") != null) {
 			session.removeAttribute("admin");
@@ -47,15 +47,13 @@ public class StudentLoginController {
 
 	@PostMapping("/login")
 	public String studentLogin(
-			@Valid 
-			@ModelAttribute("loginForm")
-			StudentLoginForm form,
+			@Valid @ModelAttribute("loginForm") StudentLoginForm form,
 			Errors errors,
 			Model model) {
 		// System.out.println(errors);
 
 		Student student = service.authenticateStudent(form.getLoginId(), form.getLoginPass(), errors);
-		
+
 		if (errors.hasErrors()) {
 			return "login";
 		}
@@ -73,11 +71,5 @@ public class StudentLoginController {
 		session.invalidate();
 		rd.addFlashAttribute("loginMessage", "ログアウトしました。");
 		return "redirect:/login";
-	}
-
-	// 教材貸し出しページ
-	@GetMapping({ "/", "/rental" })
-	public String showRentalList() {
-		return "rental";
 	}
 }
