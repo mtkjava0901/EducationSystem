@@ -49,13 +49,12 @@ public class RentalController {
 		// 貸し出し可能な教材一覧(ページネーション有り)
 		List<Material> availableMaterials = materialService.getAvailableMaterialsByPage(page, NUM_PER_PAGE);
 		model.addAttribute("availableMaterials", availableMaterials);
-		
+
 		// 総ページ数計算
 		int totalCounts = materialService.getAvailableTotalCount(); // 総件数
 		int totalPages = (int) Math.ceil((double) totalCounts / NUM_PER_PAGE);
 		model.addAttribute("page", page);
 		model.addAttribute("totalPages", totalPages);
-
 
 		return "rental";
 	}
@@ -66,11 +65,22 @@ public class RentalController {
 			@PathVariable Integer materialId) {
 		Student student = (Student) session.getAttribute("student");
 		if (student != null) {
+			// 既に借りている教材件数を取得
+			int borrowedCount = rentalService.getBorrowingRecordsByStudent(student.getId()).size();
+			// 3件以上なら借りられない
+			if (borrowedCount >= 3) {
+				session.setAttribute("borrowError", "一度に借りられる教材は3件までです。");
+				return "redirect:/rental";
+			}
+			// 借りる処理
 			RentalRecord record = new RentalRecord();
 			record.setStudent(student);
 			record.setMaterial(materialService.getMaterialById(materialId));
 			record.setBorrowedAt(LocalDateTime.now());
 			rentalService.borrowMaterial(record);
+			
+			// borrowフラグ更新
+			materialService.updateBorrowStatus(materialId, true);
 		}
 		return "redirect:/rental";
 	}
@@ -83,6 +93,9 @@ public class RentalController {
 		if (record != null) {
 			record.setReturnedAt(LocalDateTime.now());
 			rentalService.returnMaterial(record);
+			
+			// borrowフラグ更新
+			materialService.updateBorrowStatus(record.getMaterial().getId(), false);
 		}
 		return "redirect:/rental";
 	}

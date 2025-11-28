@@ -45,4 +45,7 @@ public interface MaterialService {
 
 	// データの全件数を取得
 	int getTotalPages(int numPerPage);
+	
+	// borrowフラグ更新
+	void updateBorrowStatus(Integer materialId, boolean borrow);
 }

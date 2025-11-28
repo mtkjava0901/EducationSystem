@@ -30,5 +30,7 @@ public interface RentalRecordService {
 	// 貸し出し中だけ取得
 	List<RentalRecord> getBorrowingRecords();
 
+	// 貸し出し中の教材を取得
+	List<RentalRecord> getBorrowingRecordsByStudent(Integer studentId);
 
 }

@@ -1,6 +1,7 @@
 package com.example.app.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -98,6 +99,11 @@ public class MaterialServiceImpl implements MaterialService {
 	public int getTotalPages(int numPerPage) {
 		double totalNum = (double) mapper.count();
 		return (int) Math.ceil(totalNum / numPerPage);
+	}
+
+	@Override
+	public void updateBorrowStatus(Integer materialId, boolean borrow) {
+		mapper.updateBorrow(Map.of("id", materialId, "borrow", borrow ? 1 : 0));
 	}
 
 }

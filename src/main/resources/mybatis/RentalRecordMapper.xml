@@ -140,4 +140,12 @@
 		ORDER BY rr.borrowed_at DESC
 	</select>
 
+	<!-- 貸し出し中の教材を取得 -->
+	<select id="selectBorrowingByStudent"
+		resultMap="rentalRecordMap">
+		<include refid="baseSelect" />
+		WHERE rr.student_id = #{studentId} AND rr.returned_at IS NULL
+		ORDER BY rr.borrowed_at DESC
+	</select>
+
 </mapper>

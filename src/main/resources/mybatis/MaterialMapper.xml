@@ -117,24 +117,23 @@
 		LIMIT #{offset}, #{limit}
 	</select>
 
-	<!-- 全件の貸し出し可能教材をを取得 -->
-	<select id="selectAvailableMaterials" resultMap="material">
-		<include refid="joinSelect" />
-		WHERE materials.borrow = 0
-		AND materials.status = 'ACT'
-		ORDER BY
-		materials.name
-	</select>
-
 	<!-- ページング（貸し出し可能） -->
 	<select id="selectAvailableMaterialsByPage" resultMap="material">
 		<include refid="joinSelect" />
 		WHERE materials.borrow = 0
 		AND materials.status = 'ACT'
 		ORDER BY
-		materials.name
-		LIMIT #{offset},
-		#{limit}
+		materials.created DESC
+		LIMIT #{offset}, #{limit}
+	</select>
+
+	<!-- 全件の貸し出し可能教材を取得 -->
+	<select id="selectAvailableMaterials" resultMap="material">
+		<include refid="joinSelect" />
+		WHERE materials.borrow = 0
+		AND materials.status = 'ACT'
+		ORDER BY
+		materials.created DESC
 	</select>
 
 	<!-- 貸し出し可能件数 -->

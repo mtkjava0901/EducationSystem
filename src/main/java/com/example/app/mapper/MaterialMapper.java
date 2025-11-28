@@ -1,6 +1,7 @@
 package com.example.app.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -56,8 +57,7 @@ public interface MaterialMapper {
 	int countAvailable();
 
 	// borrowフラグ更新(貸出/返却)
-	void updateBorrow(@Param("id") Integer id,
-			@Param("borrow") int borrow);
+	void updateBorrow(Map<String, Object> params);
 }
 
 // 教材倫理削除(statusを'DEL'に変更、安全に扱えるように)(未使用)

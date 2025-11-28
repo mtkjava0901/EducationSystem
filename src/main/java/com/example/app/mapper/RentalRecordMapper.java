@@ -32,8 +32,11 @@ public interface RentalRecordMapper {
 
 	// 件数カウント
 	int countAll();
-	
+
 	// 貸し出し中だけを取得
 	List<RentalRecord> selectBorrowing();
+
+	// 貸し出し中の教材を取得
+	List<RentalRecord> selectBorrowingByStudent(Integer studentId);
 
 }

@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class RentalRecordServiceImpl implements RentalRecordService {
 
 	private final RentalRecordMapper mapper;
@@ -62,9 +62,16 @@ public class RentalRecordServiceImpl implements RentalRecordService {
 		return mapper.countAll();
 	}
 
+	// 貸し出し中だけ取得
 	@Override
 	public List<RentalRecord> getBorrowingRecords() {
 		return mapper.selectBorrowing();
+	}
+
+	// 貸し出し中の教材を取得
+	@Override
+	public List<RentalRecord> getBorrowingRecordsByStudent(Integer studentId) {
+		return mapper.selectBorrowingByStudent(studentId);
 	}
 
 }
