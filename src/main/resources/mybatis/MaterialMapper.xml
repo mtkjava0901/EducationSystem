@@ -5,24 +5,36 @@
 	<!-- 結合SQLIDを設定(使い回し用) -->
 	<sql id="joinSelect">
 		SELECT
-		materials.id, materials.name, materials.publisher,
-		materials.note, materials.created, materials.status,
-		materials.material_type_id, material_types.name AS material_type_name
+		materials.id,
+		materials.name,
+		materials.publisher,
+		materials.note,
+		materials.created,
+		materials.status,
+		materials.borrow,
+		materials.material_type_id,
+		material_types.name AS material_type_name
 		FROM materials
-		JOIN
-		material_types
+		JOIN material_types
 		ON materials.material_type_id =
 		material_types.id
 	</sql>
 
 	<!-- resultMapを定義 -->
 	<resultMap id="material" type="Material" autoMapping="true">
+		<id property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="publisher" column="publisher" />
+		<result property="note" column="note" />
+		<result property="created" column="created" />
+		<result property="status" column="status" />
+		<result property="borrow" column="borrow" javaType="boolean" />
+
 		<association property="materialType"
 			javaType="MaterialType">
 			<id property="id" column="material_type_id" />
 			<result property="name" column="material_type_name" />
 		</association>
-
 	</resultMap>
 
 	<!-- 教材一覧 -->
@@ -48,17 +60,19 @@
 		<!-- materials : id, name, material_type, publisher, note, -->
 		INSERT INTO materials
 		(name, publisher, note, material_type_id,
-		created)
+		created, borrow)
 		VALUES
-		(#{name}, #{publisher}, #{note}, #{materialType.id},
-		NOW())
+		(#{name}, #{publisher}, #{note},
+		#{materialType.id},
+		NOW(), #{borrow})
 	</insert>
 
 	<!-- 教材編集 -->
 	<update id="update" parameterType="material">
 		UPDATE materials
 		SET
-		name = #{name},
+		name =
+		#{name},
 		publisher = #{publisher},
 		note = #{note},
 		material_type_id =
@@ -102,5 +116,42 @@
 		<include refid="joinSelect" />
 		LIMIT #{offset}, #{limit}
 	</select>
+
+	<!-- 全件の貸し出し可能教材をを取得 -->
+	<select id="selectAvailableMaterials" resultMap="material">
+		<include refid="joinSelect" />
+		WHERE materials.borrow = 0
+		AND materials.status = 'ACT'
+		ORDER BY
+		materials.name
+	</select>
+
+	<!-- ページング（貸し出し可能） -->
+	<select id="selectAvailableMaterialsByPage" resultMap="material">
+		<include refid="joinSelect" />
+		WHERE materials.borrow = 0
+		AND materials.status = 'ACT'
+		ORDER BY
+		materials.name
+		LIMIT #{offset},
+		#{limit}
+	</select>
+
+	<!-- 貸し出し可能件数 -->
+	<select id="countAvailable" resultType="int">
+		SELECT COUNT(*)
+		FROM
+		materials
+		WHERE borrow = 0
+		AND status = 'ACT'
+	</select>
+
+	<!-- borrowフラグ更新(貸出/返却) -->
+	<update id="updateBorrow" parameterType="map">
+		UPDATE materials
+		SET
+		borrow = #{borrow}
+		WHERE id = #{id}
+	</update>
 
 </mapper>

@@ -28,6 +28,8 @@
 		<div class="row mt-4">
 			<div class="col">
 				<h2 class="h4">貸し出し中の教材</h2>
+
+				<!-- 貸し出し中教材テーブル -->
 				<table class="table table-bordered">
 					<tr>
 						<th>教材名</th>
@@ -36,22 +38,21 @@
 						<th>備考</th>
 						<th>返却</th>
 					</tr>
-					<tr>
-						<td>文化人類学入門１</td>
-						<td>DVD</td>
-						<td>日本文化人類学協会</td>
-						<td>全２巻。初学者向けのDVD</td>
-						<td><a href="" class="btn btn-danger btn-sm">返却</a></td>
-					</tr>
-					<tr>
-						<td>文化人類学入門２</td>
-						<td>DVD</td>
-						<td>日本文化人類学協会</td>
-						<td>全２巻。初学者向けのDVD</td>
-						<td><a href="" class="btn btn-danger btn-sm">返却</a></td>
+
+					<tr th:each="record : ${records}">
+						<td>[[ ${record.material.name} ]] </td>
+						<td>[[ ${record.material.materialType.name} ]]</td>
+						<td>[[ ${record.material.publisher} ]]</td>
+						<td>[[ ${record.material.note} ]]</td>
+						<td>
+							<form th:action="@{/return/{recordId}(recordId=${record.id})}" method="post">
+								<button class="btn btn-danger btn-sm" type="submit">返却</button>
+							</form>
+						</td>
 					</tr>
 				</table>
 
+				<!-- 貸し出し可能教材テーブル -->
 				<h1 class="h4 mt-5">貸し出し可能な教材</h1>
 				<table class="table table-bordered">
 					<tr>
@@ -61,50 +62,45 @@
 						<th>備考</th>
 						<th>貸し出し</th>
 					</tr>
-					<tr>
-						<td>実践ビジネス英語とネゴシエーション１</td>
-						<td>DVD</td>
-						<td>ABC出版</td>
-						<td>全２巻。中級者向け</td>
-						<td><a href="" class="btn btn-success btn-sm">借りる</a></td>
-					</tr>
-					<tr>
-						<td>実践ビジネス英語とネゴシエーション２</td>
-						<td>DVD</td>
-						<td>ABC出版</td>
-						<td>全２巻。中級者向け</td>
-						<td><a href="" class="btn btn-success btn-sm">借りる</a></td>
-					</tr>
-					<tr>
-						<td>東京スカイツリー Visual Book</td>
-						<td>書籍</td>
-						<td>空町書房</td>
-						<td></td>
-						<td><a href="" class="btn btn-success btn-sm">借りる</a></td>
-					</tr>
-					<tr>
-						<td>超時短！作り置きクッキング</td>
-						<td>書籍</td>
-						<td>XYZ出版</td>
-						<td></td>
-						<td><a href="" class="btn btn-success btn-sm">借りる</a></td>
-					</tr>
-					<tr>
-						<td>諸学者のためのJava入門</td>
-						<td>書籍</td>
-						<td>ABC出版</td>
-						<td></td>
-						<td><a href="" class="btn btn-success btn-sm">借りる</a></td>
+
+					<tr th:each="material : ${availableMaterials}">
+						<td>[[ ${material.name} ]]</td>
+						<td>[[ ${material.materialType.name} ]]</td>
+						<td>[[ ${material.publisher} ]]</td>
+						<td>[[ ${material.note} ]]</td>
+						<td>
+							<form th:action="@{/borrow/{materialId}(materialId=${material.id})}" method="post">
+								<button class="btn btn-success btn-sm" type="submit">借りる</button>
+							</form>
+						</td>
 					</tr>
 				</table>
 
-				<ul class="pagination">
-					<li class="page-item disabled"><a class="page-link" href="">&laquo;</a></li>
-					<li class="page-item active"><a class="page-link" href="">1</a></li>
-					<li class="page-item"><a class="page-link" href="">2</a></li>
-					<li class="page-item"><a class="page-link" href="">3</a></li>
-					<li class="page-item"><a class="page-link" href="">&raquo;</a></li>
+				<!-- ページネーション -->
+				<ul class="pagination mt-4" th:if="${totalPages >= 2}">
+					<li class="page-item" th:classappend="${page == 1} ? 'disabled'">
+						<a class="page-link" th:href="@{/rental(page=${page - 1})}">&laquo;</a>
+					</li>
+
+					<li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}"
+						th:classappend="${i == page} ? 'active'">
+						<a class="page-link" th:href="@{/rental(page=${i})}" th:text="${i}"></a>
+					</li>
+
+					<li class="page-item" th:classappend="${page == totalPages} ? 'disabled'">
+						<a class="page-link" th:href="@{/rental(page=${page + 1})}">&raquo;</a>
+					</li>
 				</ul>
+				<!-- ページネーション -->
+
+				<!-- <ul class="pagination">-->
+				<!--	<li class="page-item disabled"><a class="page-link" href="">&laquo;</a></li> -->
+				<!--	<li class="page-item active"><a class="page-link" href="">1</a></li> -->
+				<!--	<li class="page-item"><a class="page-link" href="">2</a></li> -->
+				<!--	<li class="page-item"><a class="page-link" href="">3</a></li> -->
+				<!--	<li class="page-item"><a class="page-link" href="">&raquo;</a></li> -->
+				<!-- </ul> -->
+
 			</div><!-- /.col- -->
 		</div><!-- /.row -->
 

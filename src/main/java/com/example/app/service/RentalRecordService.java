@@ -20,5 +20,15 @@ public interface RentalRecordService {
 
 	// 削除
 	void deleteRentalRecord(Integer id);
+	
+	// 指定ページのデータ取得
+	List<RentalRecord> getRentalRecordsByPage(int page, int numPerPage);
+	
+	// 全件数を取得
+	int getTotalCount();
+	
+	// 貸し出し中だけ取得
+	List<RentalRecord> getBorrowingRecords();
+
 
 }

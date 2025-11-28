@@ -3,6 +3,7 @@ package com.example.app.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.example.app.domain.RentalRecord;
 
@@ -23,5 +24,16 @@ public interface RentalRecordMapper {
 
 	// 削除
 	void delete(Integer id);
+
+	// ページ用データ取得
+	List<RentalRecord> selectByPage(
+			@Param("offset") int offset,
+			@Param("limit") int limit);
+
+	// 件数カウント
+	int countAll();
+	
+	// 貸し出し中だけを取得
+	List<RentalRecord> selectBorrowing();
 
 }

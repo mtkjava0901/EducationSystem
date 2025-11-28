@@ -47,4 +47,24 @@ public class RentalRecordServiceImpl implements RentalRecordService {
 		mapper.delete(id);
 	}
 
+	// 指定ページのデータ取得
+	@Override
+	public List<RentalRecord> getRentalRecordsByPage(int page, int numPerPage) {
+		// 例: page=1 → offset=0, page=2 → offset=5
+		int offset = (page - 1) * numPerPage;
+
+		return mapper.selectByPage(offset, numPerPage);
+	}
+
+	// 全件数を取得
+	@Override
+	public int getTotalCount() {
+		return mapper.countAll();
+	}
+
+	@Override
+	public List<RentalRecord> getBorrowingRecords() {
+		return mapper.selectBorrowing();
+	}
+
 }

@@ -27,6 +27,8 @@ public class Material {
 	private LocalDateTime created; // 登録日
 	private String status; // アクティブ
 	
-	private RentalRecord rentalRecord ; // 貸し出し記録 //borrow(オブジェクト参照)
+	private RentalRecord rentalRecord ; // 貸し出し記録(オブジェクト参照)
+	
+	private boolean borrow; // 貸し出し中フラグ 0=貸出可 1=貸出中
 
 }

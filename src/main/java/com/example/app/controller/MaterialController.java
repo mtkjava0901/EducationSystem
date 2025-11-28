@@ -29,24 +29,10 @@ public class MaterialController {
 
 	// 1ページの表示数
 	private final int NUM_PER_PAGE = 5;
-
+	
+	
 	private final MaterialService service;
 	private final HttpSession session;
-
-	// 教材一覧(post無し) (ページネーション付与)
-	/*
-		@GetMapping("/list")
-		public String showList(
-				@RequestParam(name = "page", defaultValue = "1") Integer page,
-				Model model) {
-			// 1ページ文の教材のみ取得
-			List<Material> materials = service.getMaterialListByPage(page, NUM_PER_PAGE);
-			model.addAttribute("list", materials);
-			model.addAttribute("page", page);
-			model.addAttribute("totalPages", service.getTotalPages(NUM_PER_PAGE));
-			return "admin/material/list";
-		}
-	*/
 
 	@GetMapping("/list")
 	public String showList(

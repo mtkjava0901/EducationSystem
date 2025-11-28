@@ -42,9 +42,22 @@ public interface MaterialMapper {
 	Long count();
 
 	// ページごとのデータを取得
-	List<Material> selectLimitedMaterials
-	(@Param("offset") int offset,
+	List<Material> selectLimitedMaterials(@Param("offset") int offset,
 			@Param("limit") int limit);
+
+	// 貸し出し可能な教材を全件取得
+	List<Material> selectAvailableMaterials();
+
+	// 貸し出し可能な教材をページネーション付きで取得
+	List<Material> selectAvailableMaterialsByPage(@Param("offset") int offset,
+			@Param("limit") int limit);
+
+	// 貸し出し可能教材の件数（ページネーション用）
+	int countAvailable();
+
+	// borrowフラグ更新(貸出/返却)
+	void updateBorrow(@Param("id") Integer id,
+			@Param("borrow") int borrow);
 }
 
 // 教材倫理削除(statusを'DEL'に変更、安全に扱えるように)(未使用)

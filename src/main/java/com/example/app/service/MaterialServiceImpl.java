@@ -40,6 +40,7 @@ public class MaterialServiceImpl implements MaterialService {
 	// 教材追加
 	@Override
 	public void addMaterial(Material material) {
+		material.setBorrow(false); // 初期値を明示
 		mapper.insert(material);
 	}
 
@@ -67,18 +68,36 @@ public class MaterialServiceImpl implements MaterialService {
 		return mapper.countByNameExcludingId(name, id) > 0;
 	}
 
-	// データの全件数を取得
-	@Override
-	public int getTotalPages(int numPerPage) {
-		double totalNum = (double) mapper.count();
-		return (int) Math.ceil(totalNum / numPerPage);
-	}
-
 	// ページごとのデータを取得
 	@Override
 	public List<Material> getMaterialListByPage(int page, int numPerPage) {
 		int offset = numPerPage * (page - 1);
 		return mapper.selectLimitedMaterials(offset, numPerPage);
+	}
+
+	// 貸し出し可能教材（全件）
+	@Override
+	public List<Material> getAvailableMaterials() {
+		return mapper.selectAvailableMaterials();
+	}
+
+	// 貸し出し可能教材（ページネーション対応）
+	@Override
+	public List<Material> getAvailableMaterialsByPage(int page, int numPerPage) {
+		int offset = numPerPage * (page - 1);
+		return mapper.selectAvailableMaterialsByPage(offset, numPerPage);
+	}
+
+	@Override
+	public int getAvailableTotalCount() {
+		return mapper.countAvailable();
+	}
+
+	// データの全件数を取得
+	@Override
+	public int getTotalPages(int numPerPage) {
+		double totalNum = (double) mapper.count();
+		return (int) Math.ceil(totalNum / numPerPage);
 	}
 
 }
