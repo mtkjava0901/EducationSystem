@@ -30,8 +30,21 @@ public class RentalController {
 	private final RentalRecordService rentalService;
 	private final MaterialService materialService;
 
+	// /rentalへのリダイレクト
+	@GetMapping("/")
+	public String redirectToRental() {
+		// sessionにstudentがいなければログインへ
+		Student student = (Student) session.getAttribute("student");
+		if (student == null) {
+			return "redirect:/login";
+		}
+		
+		// ログインしていたら/rentalへ
+		return "redirect:/rental";
+	}
+	
 	// 教材貸し出しページ
-	@GetMapping({ "/", "/rental" })
+	@GetMapping("/rental")
 	public String showRentalList(
 			@RequestParam(name = "page", defaultValue = "1") int page,
 			Model model) {

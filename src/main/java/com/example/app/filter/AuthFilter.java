@@ -27,18 +27,47 @@ public class AuthFilter implements Filter {
 		String contextPath = req.getContextPath();
 
 		// ログインページ、ログアウトページはフィルタ対象外
-		if (uri.equals(contextPath + "/login")
-				|| uri.equals(contextPath + "/logout")
-				|| uri.equals(contextPath + "/admin/login")
-				|| uri.equals(contextPath + "/admin/logout")) {
-			chain.doFilter(request, response);
-			return;
+		//if (uri.equals(contextPath + "/login")
+		//		|| uri.equals(contextPath + "/logout")
+		//				|| uri.equals(contextPath + "/admin/login")
+		//				|| uri.equals(contextPath + "/admin/logout")) {
+		//			chain.doFilter(request, response);
+		//			return;
+		//		}
+
+		// 管理者ページ
+		if (uri.startsWith(contextPath + "/admin")) {
+			if (!uri.equals(contextPath + "/admin/login")
+					&& (session == null || session.getAttribute("admin") == null)) {
+
+				res.sendRedirect(contextPath + "/admin/login");
+				return;
+			}
 		}
 
-		// Adminページの場合
+		// 生徒ページ
+		boolean studentProtected = uri.equals(contextPath + "/") ||
+				uri.startsWith(contextPath + "/rental");
+
+		if (studentProtected) {
+			if (!uri.equals(contextPath + "/login")
+					&& (session == null || session.getAttribute("student") == null)) {
+
+				res.sendRedirect(contextPath + "/login");
+				return;
+			}
+		}
+
+		// 認証済みなら次のFilter / Controllerへ
+		chain.doFilter(request, response);
+	}
+
+}
+
+/*		
 		if (uri.startsWith(contextPath + "/admin/")) {
 			if (session == null || session.getAttribute("admin") == null) {
-				// リダイレクト前にchain.doFilterは呼ばない
+				// リダイレクト前にchain.doFilterは呼ばなfい
 				res.sendRedirect(contextPath + "/admin/login");
 				return;
 			}
@@ -53,9 +82,4 @@ public class AuthFilter implements Filter {
 				return;
 			}
 		}
-
-		// 認証済みなら次のFilter / Controllerへ
-		chain.doFilter(request, response);
-	}
-
-}
+*/
