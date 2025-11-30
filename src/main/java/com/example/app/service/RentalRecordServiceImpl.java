@@ -32,6 +32,14 @@ public class RentalRecordServiceImpl implements RentalRecordService {
 	// 登録(借り出し)
 	@Override
 	public void borrowMaterial(RentalRecord record) {
+
+		// バグテスト
+		System.out.println(
+		    "Borrowing material: studentId=" + record.getStudent().getId()
+		    + ", materialId=" + record.getMaterial().getId()
+		    + ", time=" + record.getBorrowedAt()
+		);
+
 		mapper.insert(record);
 	}
 
@@ -73,12 +81,11 @@ public class RentalRecordServiceImpl implements RentalRecordService {
 	public List<RentalRecord> getBorrowingRecordsByStudent(Integer studentId) {
 		return mapper.selectBorrowingByStudent(studentId);
 	}
-	
+
 	// 教材IDごとの最新貸し出し履歴を取得（上限件数指定）
 	@Override
 	public List<RentalRecord> getRecentRecordsByMaterial(Integer materialId, int limit) {
-	    return mapper.selectRecentByMaterial(materialId, limit);
+		return mapper.selectRecentByMaterial(materialId, limit);
 	}
-
 
 }
