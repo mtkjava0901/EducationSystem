@@ -63,7 +63,7 @@ public class RentalController {
 		}
 
 		// 貸し出し中のみ表示
-		List<RentalRecord> records = rentalService.getBorrowingRecords();
+		List<RentalRecord> records = rentalService.getBorrowingRecordsByStudent(student.getId());
 		model.addAttribute("records", records);
 
 		// 貸し出し可能な教材一覧(ページネーション有り)
