@@ -23,14 +23,27 @@
 			</div>
 		</nav>
 	</header>
+	
 	<div class="container">
+		
 
 		<div class="row mt-4">
 			<div class="col">
-				<h2 class="h4">貸し出し中の教材</h2>
 
-				<!-- 貸し出し中教材テーブル -->
-				<table class="table table-bordered">
+				<!-- エラーメッセージ（借りられない場合など） -->
+						<div th:if="${errorMessage}" class="alert alert-danger mt-3" th:text="${errorMessage}"></div>
+
+								
+				<h2 class="h4">貸し出し中の教材</h2>
+				
+				
+				<!-- 貸し出し中の教材が 0 件の場合 -->
+								<div th:if="${#lists.isEmpty(records)}" class="alert alert-info">
+									現在借りている教材はありません。
+								</div>
+
+				<!-- 貸し出し中教材テーブル(1件以上で表示) -->
+				<table class="table table-bordered" th:if="${!#lists.isEmpty(records)}">
 					<tr>
 						<th>教材名</th>
 						<th>種類</th>

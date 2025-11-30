@@ -38,11 +38,11 @@ public class RentalController {
 		if (student == null) {
 			return "redirect:/login";
 		}
-		
+
 		// ログインしていたら/rentalへ
 		return "redirect:/rental";
 	}
-	
+
 	// 教材貸し出しページ
 	@GetMapping("/rental")
 	public String showRentalList(
@@ -53,6 +53,13 @@ public class RentalController {
 		Student student = (Student) session.getAttribute("student");
 		if (student != null) {
 			model.addAttribute("username", student.getName()); // 名前を渡す
+		}
+
+		// Sessionのエラーメッセージを取得、modelに渡す
+		String errorMessage = (String) session.getAttribute("borrowError");
+		if (errorMessage != null) {
+			model.addAttribute("errorMessage", errorMessage);
+			session.removeAttribute("borrowError"); // 1回表示したら消す
 		}
 
 		// 貸し出し中のみ表示
@@ -91,7 +98,7 @@ public class RentalController {
 			record.setMaterial(materialService.getMaterialById(materialId));
 			record.setBorrowedAt(LocalDateTime.now());
 			rentalService.borrowMaterial(record);
-			
+
 			// borrowフラグ更新
 			materialService.updateBorrowStatus(materialId, true);
 		}
@@ -106,7 +113,7 @@ public class RentalController {
 		if (record != null) {
 			record.setReturnedAt(LocalDateTime.now());
 			rentalService.returnMaterial(record);
-			
+
 			// borrowフラグ更新
 			materialService.updateBorrowStatus(record.getMaterial().getId(), false);
 		}
