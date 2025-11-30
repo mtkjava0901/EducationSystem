@@ -39,4 +39,7 @@ public interface RentalRecordMapper {
 	// 貸し出し中の教材を取得
 	List<RentalRecord> selectBorrowingByStudent(Integer studentId);
 
+	// 教材IDごとの貸し出し履歴を最新5件取得
+	List<RentalRecord> selectRecentByMaterial(@Param("materialId") Integer materialId, @Param("limit") int limit);
+
 }
