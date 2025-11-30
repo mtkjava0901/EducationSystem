@@ -119,5 +119,23 @@ public class RentalController {
 		}
 		return "redirect:/rental";
 	}
+	
+	// 教材詳細用メソッド
+	@GetMapping("/admin/material/{materialId}")
+	public String showMaterialDetail(
+	        @PathVariable Integer materialId,
+	        Model model) {
+
+	    // 教材情報
+	    Material material = materialService.getMaterialById(materialId);
+	    model.addAttribute("material", material);
+
+	    // 最新5件の貸し出し記録
+	    List<RentalRecord> recentRecords = rentalService.getRecentRecordsByMaterial(materialId, 5);
+	    model.addAttribute("recentRecords", recentRecords);
+
+	    return "admin/material_detail"; // thymeleaf のテンプレート名
+	}
+
 
 }

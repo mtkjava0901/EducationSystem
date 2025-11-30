@@ -73,5 +73,12 @@ public class RentalRecordServiceImpl implements RentalRecordService {
 	public List<RentalRecord> getBorrowingRecordsByStudent(Integer studentId) {
 		return mapper.selectBorrowingByStudent(studentId);
 	}
+	
+	// 教材IDごとの最新貸し出し履歴を取得（上限件数指定）
+	@Override
+	public List<RentalRecord> getRecentRecordsByMaterial(Integer materialId, int limit) {
+	    return mapper.selectRecentByMaterial(materialId, limit);
+	}
+
 
 }
