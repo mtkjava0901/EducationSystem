@@ -145,7 +145,17 @@
 		resultMap="rentalRecordMap">
 		<include refid="baseSelect" />
 		WHERE rr.student_id = #{studentId} AND rr.returned_at IS NULL
-		ORDER BY rr.borrowed_at DESC
+		ORDER BY
+		rr.borrowed_at DESC
 	</select>
+
+	<!-- ========================= 教材ごとの最新貸し出し履歴5件 ========================= -->
+	<select id="selectRecentByMaterial" resultMap="rentalRecordMap">
+		<include refid="baseSelect" />
+		WHERE rr.material_id = #{materialId}
+		ORDER BY rr.borrowed_at DESC
+		LIMIT #{limit}
+	</select>
+
 
 </mapper>
