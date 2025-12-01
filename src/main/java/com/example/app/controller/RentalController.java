@@ -95,7 +95,13 @@ public class RentalController {
 			// 借りる処理
 			RentalRecord record = new RentalRecord();
 			record.setStudent(student);
-			record.setMaterial(materialService.getMaterialById(materialId));
+			
+			// デバックログ出力
+			Material material = materialService.getMaterialById(materialId);
+			System.out.println("DEBUG: material=" + material);  // ← 追加
+			record.setMaterial(material);
+			
+			// record.setMaterial(materialService.getMaterialById(materialId));
 			record.setBorrowedAt(LocalDateTime.now());
 			rentalService.borrowMaterial(record);
 
