@@ -32,5 +32,9 @@ public interface RentalRecordService {
 
 	// 貸し出し中の教材を取得
 	List<RentalRecord> getBorrowingRecordsByStudent(Integer studentId);
+	
+	//教材IDごとの最新貸し出し履歴を取得（上限件数指定）
+	List<RentalRecord> getRecentRecordsByMaterial(Integer materialId, int limit);
+
 
 }

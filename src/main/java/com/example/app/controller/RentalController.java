@@ -63,7 +63,7 @@ public class RentalController {
 		}
 
 		// 貸し出し中のみ表示
-		List<RentalRecord> records = rentalService.getBorrowingRecords();
+		List<RentalRecord> records = rentalService.getBorrowingRecordsByStudent(student.getId());
 		model.addAttribute("records", records);
 
 		// 貸し出し可能な教材一覧(ページネーション有り)
@@ -95,7 +95,13 @@ public class RentalController {
 			// 借りる処理
 			RentalRecord record = new RentalRecord();
 			record.setStudent(student);
-			record.setMaterial(materialService.getMaterialById(materialId));
+			
+			// デバックログ出力
+			Material material = materialService.getMaterialById(materialId);
+			System.out.println("DEBUG: material=" + material);  // ← 追加
+			record.setMaterial(material);
+			
+			// record.setMaterial(materialService.getMaterialById(materialId));
 			record.setBorrowedAt(LocalDateTime.now());
 			rentalService.borrowMaterial(record);
 
@@ -119,5 +125,23 @@ public class RentalController {
 		}
 		return "redirect:/rental";
 	}
+	
+	// 教材詳細用メソッド
+	@GetMapping("/admin/material/{materialId}")
+	public String showMaterialDetail(
+	        @PathVariable Integer materialId,
+	        Model model) {
+
+	    // 教材情報
+	    Material material = materialService.getMaterialById(materialId);
+	    model.addAttribute("material", material);
+
+	    // 最新5件の貸し出し記録
+	    List<RentalRecord> recentRecords = rentalService.getRecentRecordsByMaterial(materialId, 5);
+	    model.addAttribute("recentRecords", recentRecords);
+
+	    return "admin/material_detail"; // thymeleaf のテンプレート名
+	}
+
 
 }

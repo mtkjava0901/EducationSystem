@@ -94,7 +94,9 @@
 
 	<!-- ========================= 登録(借り出し) ========================= -->
 	<insert id="insert"
-		parameterType="com.example.app.domain.RentalRecord">
+		parameterType="com.example.app.domain.RentalRecord"
+		useGeneratedKeys="true"
+		keyProperty="id">
 		INSERT INTO rental_records (
 		student_id,
 		material_id,
