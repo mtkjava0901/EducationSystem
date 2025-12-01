@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.app.mapper.StudentMapper">
+
+	<!-- 結合SQLを設定 -->
+	<sql id="studentSelect">
+		SELECT
+		student.id,
+		student.name,
+		student.birthday,
+		student.login_id,
+		student.login_pass,
+		student.status
+		FROM students
+		student
+	</sql>
+
+	<!-- resultMapを定義 -->
+	<resultMap id="student" type="Student" autoMapping="true" />
+
+	<!-- 生徒一覧 -->
+	<select id="selectAll" resultMap="student">
+		<include refid="studentSelect" />
+		WHERE student.status = 'ACT'
+		ORDER BY student.id ASC
+	</select>
+
+	<!-- 生徒ID取得 -->
+	<select id="selectById" resultMap="student">
+		<include refid="studentSelect" />
+		WHERE student.id = #{id}
+	</select>
+
+
+	<!-- 生徒追加 -->
+	<insert id="insert" parameterType="student">
+		INSERT INTO students
+		(name,
+		birthday, login_id, login_pass)
+		VALUES
+		(#{name}, #{birthday},
+		#{loginId}, #{loginPass})
+	</insert>
+
+	<!-- 生徒編集 -->
+	<update id="update" parameterType="student">
+		UPDATE students
+		SET
+		name =
+		#{name},
+		birthday = #{birthday},
+		login_id = #{loginId},
+		login_pass =
+		#{loginPass}
+		WHERE id = #{id}
+	</update>
+
+	<!-- 生徒倫理削除 -->
+	<update id="delete" parameterType="student">
+		UPDATE students
+		SET status =
+		'DEL'
+		WHERE id = #{id}
+	</update>
+
+	<!-- 同ログインIDが存在するか判定 -->
+	<select id="CountByLoginId" resultType="int">
+		SELECT COUNT(*)
+		FROM
+		students
+		WHERE login_id = #{loginId}
+		AND status !='DEL'
+	</select>
+
+	<!-- 指定ID以外で同ログインIDが存在するか判定(編集時) -->
+	<select id="countByLoginIdExcludingId" resultType="int">
+		SELECT
+		COUNT(*)
+		FROM students
+		WHERE login_id = #{loginId}
+		AND id != #{id}
+		AND
+		status !='DEL'
+	</select>
+
+	<!-- データの全件数を取得 -->
+	<select id="count" resultType="long">
+		SELECT COUNT(*) FROM students
+		WHERE status = 'ACT'
+	</select>
+
+	<!-- ページごとのデータを取得 -->
+	<select id="selectLimitedStudents" resultMap="student">
+		<include refid="studentSelect" />
+		WHERE student.status = 'ACT'
+		ORDER BY student.id ASC
+		LIMIT #{offset},
+		#{limit}
+	</select>
+
+	<!-- ログイン用IDで取得 -->
+	<select id="selectByLoginId" resultMap="student"
+		parameterType="string">
+		SELECT *
+		FROM students
+		WHERE login_id = #{loginId}
+		AND
+		status ='ACT'
+	</select>
+
+	<!-- DBのStudentを1件取得、パスワードが一致するかチェック -->
+	<select id="findByLoginId" resultType="Student">
+		SELECT *
+		FROM students
+		WHERE login_id = #{loginId}
+		AND status = 'ACT'
+		LIMIT 1
+	</select>
+
+	<!-- 削除済み生徒一覧 -->
+	<select id="selectDeletedStudents" resultMap="student">
+		<include refid="studentSelect" />
+		WHERE student.status = 'DEL'
+		ORDER BY student.id ASC
+	</select>
+
+	<!-- ページごとの削除済み生徒取得 -->
+	<select id="selectDeletedStudentsByPage" resultMap="student">
+		<include refid="studentSelect" />
+		WHERE student.status = 'DEL'
+		ORDER BY student.id ASC
+		LIMIT #{offset},
+		#{limit}
+	</select>
+
+	<!-- 削除済み生徒総数 -->
+	<select id="countDeleted" resultType="long">
+		SELECT COUNT(*)
+		FROM
+		students
+		WHERE status = 'DEL'
+	</select>
+
+	<!-- 削除済み生徒復活 -->
+	<update id="restoreStudent" parameterType="int">
+		UPDATE students
+		SET status = 'ACT'
+		WHERE id = #{id}
+	</update>
+
+
+</mapper>

@@ -1,6 +1,8 @@
 package com.example.app.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +42,7 @@ public class MaterialServiceImpl implements MaterialService {
 	// 教材追加
 	@Override
 	public void addMaterial(Material material) {
+		material.setBorrow(false); // 初期値を明示
 		mapper.insert(material);
 	}
 
@@ -66,5 +69,65 @@ public class MaterialServiceImpl implements MaterialService {
 	public boolean existsByNameExcludingId(String name, Integer id) {
 		return mapper.countByNameExcludingId(name, id) > 0;
 	}
+
+	// ページごとのデータを取得
+	@Override
+	public List<Material> getMaterialListByPage(int page, int numPerPage) {
+		int offset = numPerPage * (page - 1);
+		return mapper.selectLimitedMaterials(offset, numPerPage);
+	}
+
+	// 貸し出し可能教材（全件）
+	@Override
+	public List<Material> getAvailableMaterials() {
+		return mapper.selectAvailableMaterials();
+	}
+
+	// 貸し出し可能教材（ページネーション対応）
+	@Override
+	public List<Material> getAvailableMaterialsByPage(int page, int numPerPage) {
+		int offset = numPerPage * (page - 1);
+		return mapper.selectAvailableMaterialsByPage(offset, numPerPage);
+	}
+
+	@Override
+	public int getAvailableTotalCount() {
+		return mapper.countAvailable();
+	}
+
+	// データの全件数を取得
+	@Override
+	public int getTotalPages(int numPerPage) {
+		double totalNum = (double) mapper.count();
+		return (int) Math.ceil(totalNum / numPerPage);
+	}
+
+	@Override
+	public void updateBorrowStatus(Integer materialId, boolean borrow) {
+		mapper.updateBorrow(Map.of("id", materialId, "borrow", borrow ? 1 : 0));
+	}
+	
+	// 削除済み教材一覧(status='DEL')
+	
+	// 削除済み教材一覧(ページネーション付き)
+	@Override
+  public List<Material> getDeletedMaterialListByPage(int page, int numPerPage) {
+      int offset = (page - 1) * numPerPage;
+      List<Material> list = mapper.selectDeletedMaterialsByPage(offset, numPerPage);
+      return list != null ? list : new ArrayList<>();
+  }
+	
+	// 削除済み教材の件数
+	@Override
+  public int getDeletedTotalPages(int numPerPage) {
+      int total = mapper.countDeletedMaterials();
+      return (int) Math.ceil((double) total / numPerPage);
+  }
+	
+	// 削除済み教材を元に戻す('DEL'→'ACT')
+	@Override
+  public void restoreMaterial(Integer id) {
+      mapper.restoreMaterial(id);
+  }
 
 }

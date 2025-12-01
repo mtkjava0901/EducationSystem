@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.app.mapper.RentalRecordMapper">
+
+	<!-- ========================= resultMap定義 RentalRecord -> Student, Material 
+		-> MaterialType ========================= -->
+	<resultMap id="rentalRecordMap"
+		type="com.example.app.domain.RentalRecord">
+		<!-- RentalRecord の ID -->
+		<id property="id" column="rr_id" />
+
+		<!-- 通常カラム -->
+		<result property="borrowedAt" column="borrowed_at" />
+		<result property="returnedAt" column="returned_at" />
+
+		<!-- Student オブジェクト -->
+		<association property="student"
+			javaType="com.example.app.domain.Student">
+			<id property="id" column="student_id" />
+			<result property="name" column="student_name" />
+			<result property="birthday" column="student_birthday" />
+			<result property="loginId" column="student_login_id" />
+			<result property="loginPass" column="student_login_pass" />
+			<result property="status" column="student_status" />
+		</association>
+
+		<!-- Material オブジェクト -->
+		<association property="material"
+			javaType="com.example.app.domain.Material">
+			<id property="id" column="material_id" />
+			<result property="name" column="material_name" />
+			<result property="publisher" column="material_publisher" />
+			<result property="note" column="material_note" />
+			<result property="created" column="material_created" />
+			<result property="status" column="material_status" />
+
+			<!-- MaterialType は Material 内にネスト -->
+			<association property="materialType"
+				javaType="com.example.app.domain.MaterialType">
+				<id property="id" column="type_id" />
+				<result property="name" column="type_name" />
+			</association>
+		</association>
+	</resultMap>
+
+	<!-- ========================= 共通SQL文 ========================= -->
+	<sql id="baseSelect">
+		SELECT
+		rr.id AS rr_id,
+		rr.borrowed_at,
+		rr.returned_at,
+		s.id AS
+		student_id,
+		s.name AS student_name,
+		s.birthday AS student_birthday,
+		s.login_id AS student_login_id,
+		s.login_pass AS student_login_pass,
+		s.status AS student_status,
+		m.id AS material_id,
+		m.name AS
+		material_name,
+		m.publisher AS material_publisher,
+		m.note AS
+		material_note,
+		m.created AS material_created,
+		m.status AS
+		material_status,
+		mt.id AS type_id,
+		mt.name AS type_name
+		FROM
+		rental_records rr
+		LEFT JOIN students s ON rr.student_id = s.id
+		LEFT JOIN
+		materials m ON rr.material_id = m.id
+		LEFT JOIN material_types mt ON
+		m.material_type_id = mt.id
+	</sql>
+
+	<!-- ========================= 貸し出し履歴一覧 ========================= -->
+	<select id="selectAll" resultMap="rentalRecordMap">
+		<include refid="baseSelect" />
+		ORDER BY rr.borrowed_at DESC
+	</select>
+
+	<!-- ========================= ID検索 ========================= -->
+	<select id="selectById" parameterType="int"
+		resultMap="rentalRecordMap">
+		<include refid="baseSelect" />
+		WHERE rr.id = #{id}
+	</select>
+
+	<!-- ========================= 登録(借り出し) ========================= -->
+	<insert id="insert"
+		parameterType="com.example.app.domain.RentalRecord"
+		useGeneratedKeys="true"
+		keyProperty="id">
+		INSERT INTO rental_records (
+		student_id,
+		material_id,
+		borrowed_at
+		) VALUES (
+		#{student.id},
+		#{material.id},
+		#{borrowedAt}
+		)
+	</insert>
+
+	<!-- ========================= 返却日時更新 ========================= -->
+	<update id="updateReturn"
+		parameterType="com.example.app.domain.RentalRecord">
+		UPDATE rental_records
+		SET returned_at = #{returnedAt}
+		WHERE id = #{id}
+	</update>
+
+	<!-- ========================= 削除 ========================= -->
+	<delete id="delete" parameterType="int">
+		DELETE FROM rental_records
+		WHERE id = #{id}
+	</delete>
+
+	<!-- ========================= ページネーション：指定範囲のみ取得 ========================= -->
+	<select id="selectByPage" resultMap="rentalRecordMap">
+		<include refid="baseSelect" />
+		ORDER BY rr.borrowed_at DESC
+		LIMIT #{offset}, #{limit}
+	</select>
+
+	<!-- ========================= ページネーション：全件数取得 ========================= -->
+	<select id="countAll" resultType="int">
+		SELECT COUNT(*) FROM
+		rental_records
+	</select>
+
+	<!-- ========================= 貸し出し中を取得 ========================= -->
+	<select id="selectBorrowing" resultMap="rentalRecordMap">
+		<include refid="baseSelect" />
+		WHERE rr.returned_at IS NULL
+		ORDER BY rr.borrowed_at DESC
+	</select>
+
+	<!-- 貸し出し中の教材を取得 -->
+	<select id="selectBorrowingByStudent"
+		resultMap="rentalRecordMap">
+		<include refid="baseSelect" />
+		WHERE rr.student_id = #{studentId} AND rr.returned_at IS NULL
+		ORDER BY
+		rr.borrowed_at DESC
+	</select>
+
+	<!-- ========================= 教材ごとの最新貸し出し履歴5件 ========================= -->
+	<select id="selectRecentByMaterial" resultMap="rentalRecordMap">
+		<include refid="baseSelect" />
+		WHERE rr.material_id = #{materialId}
+		ORDER BY rr.borrowed_at DESC
+		LIMIT #{limit}
+	</select>
+
+
+</mapper>

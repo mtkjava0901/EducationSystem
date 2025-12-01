@@ -1,7 +1,9 @@
 package com.example.app.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 import org.springframework.stereotype.Controller;
@@ -11,10 +13,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.app.domain.Admin;
 import com.example.app.domain.Material;
+import com.example.app.domain.RentalRecord;
 import com.example.app.service.MaterialService;
+import com.example.app.service.RentalRecordService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,13 +29,34 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/admin/material")
 public class MaterialController {
 
-	private final MaterialService service;
+	// 1ページの表示数
+	private final int NUM_PER_PAGE = 5;
+	
+	
+	private final MaterialService materialService;
+	private final RentalRecordService rentalService;
+	private final HttpSession session;
 
-	// 教材一覧(post無し)
 	@GetMapping("/list")
-	public String showList(Model model) {
-		List<Material> materialList = service.getMaterialList();
-		model.addAttribute("list", materialList);
+	public String showList(
+			@RequestParam(name = "page", defaultValue = "1") Integer page,
+			Model model) {
+		// 1ページ文の教材のみ取得
+		List<Material> materials = materialService.getMaterialListByPage(page, NUM_PER_PAGE);
+		// Null安全性担保
+		if (materials == null) {
+			materials = new ArrayList<>();
+		}
+
+		// セッションからAdminユーザー取得
+		Admin admin = (Admin) session.getAttribute("admin");
+		if (admin != null) {
+			model.addAttribute("username", admin.getName()); // 名前を渡す
+		}
+
+		model.addAttribute("list", materials);
+		model.addAttribute("page", page);
+		model.addAttribute("totalPages", materialService.getTotalPages(NUM_PER_PAGE));
 		return "admin/material/list";
 	}
 
@@ -37,16 +64,36 @@ public class MaterialController {
 	@GetMapping("/show/{id}")
 	public String showDetail(
 			@PathVariable Integer id, Model model) {
-		model.addAttribute("material", service.getMaterialById(id));
+
+		// セッションからAdminユーザー取得
+		Admin admin = (Admin) session.getAttribute("admin");
+		if (admin != null) {
+			model.addAttribute("username", admin.getName()); // 名前を渡す
+		}
+		
+		Material material = materialService.getMaterialById(id);
+		model.addAttribute("material", material);
+
+		// 最新貸し出し履歴(上限5件)を取得、modelに追加
+		List<RentalRecord> recentRecords = rentalService.getRecentRecordsByMaterial(id, 5);
+		model.addAttribute("recentRecords", recentRecords);
+		
 		return "admin/material/show";
 	}
 
 	// 教材追加(post有り)
 	@GetMapping("/add")
 	public String addGetMaterial(Model model) {
+
+		// セッションからAdminユーザー取得
+		Admin admin = (Admin) session.getAttribute("admin");
+		if (admin != null) {
+			model.addAttribute("username", admin.getName()); // 名前を渡す
+		}
+
 		model.addAttribute("title", "視聴覚教材の追加");
 		model.addAttribute("material", new Material());
-		model.addAttribute("type", service.getMaterialTypeList());
+		model.addAttribute("type", materialService.getMaterialTypeList());
 		return "admin/material/add";
 	}
 
@@ -58,18 +105,18 @@ public class MaterialController {
 			Model model) {
 		// Materialのnameが空白でなければ・DBなどに同名が既に存在するか
 		if (!material.getName().isBlank()) {
-			if (service.existsByName(material.getName())) {
+			if (materialService.existsByName(material.getName())) {
 				// 既にあればerrorsにnameフィールドエラーを追加
 				errors.rejectValue("name", "error.name.notunique");
 			}
 		}
 		if (errors.hasErrors()) {
 			model.addAttribute("title", "視聴覚教材の追加");
-			model.addAttribute("type", service.getMaterialTypeList());
+			model.addAttribute("type", materialService.getMaterialTypeList());
 			return "admin/material/add";
 		}
 
-		service.addMaterial(material);
+		materialService.addMaterial(material);
 		rd.addFlashAttribute("statusMessage", "教材を追加しました。");
 		return "redirect:/admin/material/list";
 	}
@@ -78,9 +125,16 @@ public class MaterialController {
 	@GetMapping("/edit/{id}")
 	public String editGetMaterial(
 			@PathVariable Integer id, Model model) {
+
+		// セッションからAdminユーザー取得
+		Admin admin = (Admin) session.getAttribute("admin");
+		if (admin != null) {
+			model.addAttribute("username", admin.getName()); // 名前を渡す
+		}
+
 		model.addAttribute("title", "視聴覚教材の編集");
-		model.addAttribute("material", service.getMaterialById(id));
-		model.addAttribute("type", service.getMaterialTypeList());
+		model.addAttribute("material", materialService.getMaterialById(id));
+		model.addAttribute("type", materialService.getMaterialTypeList());
 		return "admin/material/edit";
 	}
 
@@ -93,22 +147,22 @@ public class MaterialController {
 			Model model) {
 
 		// 編集画面に来た時に元の名前を取得 
-		String originalMaterialName = service.getMaterialById(id).getName();
+		String originalMaterialName = materialService.getMaterialById(id).getName();
 
 		if (!material.getName().isBlank()) {
-			if (!originalMaterialName.equals(material.getName()) && service.existsByName(material.getName())) {
+			if (!originalMaterialName.equals(material.getName()) && materialService.existsByName(material.getName())) {
 				errors.rejectValue("name", "error.name.notunique");
 			}
 		}
 
 		if (errors.hasErrors()) {
 			model.addAttribute("title", "視聴覚教材の編集");
-			model.addAttribute("type", service.getMaterialTypeList());
+			model.addAttribute("type", materialService.getMaterialTypeList());
 			return "admin/material/edit";
 		}
 
 		material.setId(id);
-		service.editMaterial(material);
+		materialService.editMaterial(material);
 		rd.addFlashAttribute("statusMessage", "教材を編集しました。");
 		return "redirect:/admin/material/list";
 	}
@@ -117,7 +171,7 @@ public class MaterialController {
 	@GetMapping("/delete/{id}")
 	public String deleteGetMaterial(
 			@PathVariable Integer id, RedirectAttributes rd) {
-		service.setChangeByStatus(id);
+		materialService.setChangeByStatus(id);
 		rd.addFlashAttribute("statusMessage", "教材を削除しました");
 		return "redirect:/admin/material/list";
 	}
@@ -125,9 +179,42 @@ public class MaterialController {
 	@PostMapping("/delete/{id}")
 	public String deletePostMaterial(
 			@PathVariable Integer id, RedirectAttributes rd) {
-		service.setChangeByStatus(id);
+		materialService.setChangeByStatus(id);
 		rd.addFlashAttribute("statusMessage", "教材を削除しました");
 		return "redirect:/admin/material/list";
 	}
+	
+	// 削除済み教材一覧ページ(deleted)
+	@GetMapping("/deleted")
+	public String showDeletedMaterialList(
+			@RequestParam(name = "page", defaultValue = "1") int page,
+			Model model) {
+
+		// セッションからAdminユーザー取得
+		Admin admin = (Admin) session.getAttribute("admin");
+		if (admin != null) {
+			model.addAttribute("username", admin.getName()); // 名前を渡す
+		}
+		
+		// ページネーション付き削除済み教材一覧
+		List<Material> deletedMaterials = materialService.getDeletedMaterialListByPage(page, NUM_PER_PAGE);
+		model.addAttribute("list", deletedMaterials);
+		// modelに"page"と"totalPages"を入れdeletedに送る
+		model.addAttribute("page", page);
+		model.addAttribute("totalPages", materialService.getDeletedTotalPages(NUM_PER_PAGE));
+
+		return "admin/material/deleted";
+	}
+	
+	// 'DEL'→'ACT'処理
+	@GetMapping("/restore/{id}")
+	public String restoreMaterial(
+      @PathVariable Integer id,
+      RedirectAttributes rd) {
+
+  materialService.restoreMaterial(id);
+  rd.addFlashAttribute("statusMessage", "教材を復活させました。");
+  return "redirect:/admin/material/deleted";
+}
 
 }

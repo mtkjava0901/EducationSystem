@@ -1,6 +1,7 @@
 package com.example.app.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -11,7 +12,7 @@ import com.example.app.domain.Material;
 public interface MaterialMapper {
 
 	// 教材マッピング
-	// throws Exception;
+	// throws Exception;(一旦使わない)
 
 	// 教材一覧
 	List<Material> selectAll();
@@ -37,8 +38,38 @@ public interface MaterialMapper {
 	// 指定ID以外で同名が存在するか判定(編集時)
 	int countByNameExcludingId(@Param("name") String name,
 			@Param("id") Integer id);
-}
 
-// 教材倫理削除(statusを'DEL'に変更、安全に扱えるように)(未使用)
-// @Update("UPDATE materials SET status = 'DEL' WHERE id = #{id}")
-// int setChangeByStatus(@Param("id") Integer id);
+	// データの全件数を取得
+	Long count();
+
+	// ページごとのデータを取得
+	List<Material> selectLimitedMaterials(@Param("offset") int offset,
+			@Param("limit") int limit);
+
+	// 貸し出し可能な教材を全件取得
+	List<Material> selectAvailableMaterials();
+
+	// 貸し出し可能な教材をページネーション付きで取得
+	List<Material> selectAvailableMaterialsByPage(@Param("offset") int offset,
+			@Param("limit") int limit);
+
+	// 貸し出し可能教材の件数（ページネーション用）
+	int countAvailable();
+
+	// borrowフラグ更新(貸出/返却)
+	void updateBorrow(Map<String, Object> params);
+
+	// 削除済み教材一覧(status='DEL')
+	List<Material> selectDeletedMaterials();
+	
+	// 削除済み教材一覧(ページネーション付き)
+	List<Material> selectDeletedMaterialsByPage(
+			@Param("offset") int offset, @Param("limit") int limit);
+	
+	// 削除済み教材の件数
+	int countDeletedMaterials();
+	
+	// 削除済み教材を元に戻す('DEL'→'ACT')
+	void restoreMaterial(Integer id);
+
+}

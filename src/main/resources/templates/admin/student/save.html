@@ -25,50 +25,44 @@
 	</header>
 	<div class="container">
 
-		<h1 class="my-4 h3">視聴覚教材の追加</h1>
+		<h1 class="my-4 h3">[[ ${title} ]]</h1>
 
 		<div class="row">
 			<div class="col">
 
 				<!-- 編集フォーム -->
-				<form action="" method="post" th:object="${material}">
+				<form action="" method="post" th:object="${student}">
 					<div class="row mb-3">
-						<label for="name" class="col-md-2 col-form-label">教材名</label>
+						<label for="loginId" class="col-md-2 col-form-label">ログインID</label>
+						<div class="col-md-10">
+							<input type="text" th:field="*{loginId}" class="form-control">
+							<small th:errors="*{loginId}" class="text-danger">(ログインIDに関するエラーメッセージ)</small>
+						</div>
+					</div>
+					<div class="row mb-3">
+						<label for="password" class="col-md-2 col-form-label">パスワード</label>
+						<div class="col-md-10">
+							<input type="password" th:field="*{loginPass}" class="form-control">
+							<small th:errors="*{loginPass}" class="text-danger">(パスワードに関するエラーメッセージ)</small>
+						</div>
+					</div>
+					<div class="row mb-3">
+						<label for="name" class="col-md-2 col-form-label">氏名</label>
 						<div class="col-md-10">
 							<input type="text" th:field="*{name}" class="form-control">
-							<small th:errors="*{name}" class="text-danger">(教材名に関するエラーメッセージ)</small>
+							<small th:errors="*{name}" class="text-danger">(氏名に関するエラーメッセージ)</small>
 						</div>
 					</div>
 					<div class="row mb-3">
-						<label for="publisher" class="col-md-2 col-form-label">出版元</label>
+						<label for="birthday" class="col-md-2 col-form-label">生年月日</label>
 						<div class="col-md-10">
-							<input type="text" th:field="*{publisher}" class="form-control">
-							<small th:errors="*{publisher}" class="text-danger">(出版元に関するエラーメッセージ)</small>
+							<input type="date" th:field="*{birthday}" class="form-control" value="2000-01-01">
+							<small th:errors="*{birthday}" class="text-danger">(生年月日に関するエラーメッセージ)</small>
 						</div>
 					</div>
-
-					<div class="row mb-3">
-						<label for="note" class="col-md-2 col-form-label">備考</label>
-						<div class="col-md-10">
-							<input type="text" size="50" th:field="*{note}" class="form-control">
-							<small th:errors="*{note}" class="text-danger">(備考に関するエラーメッセージ)</small>
-						</div>
-					</div>
-
-					<div class="row mb-3">
-						<label for="material-type" class="col-md-2 col-form-label">種類</label>
-						<div class="col-md-10">
-							<select th:field="*{materialType.id}" class="form-control">
-								<option th:each="mt : ${type}" th:value="${mt.id}" th:text="${mt.name}"></option>
-							</select>
-						</div>
-					</div>
-
 					<input class="btn btn-primary" type="submit" value="保存する">
-					<a th:href="@{/admin/material/list}" class="btn btn-light">キャンセル</a>
-
+					<a th:href="@{/admin/student/list}" class="btn btn-light">キャンセル</a>
 				</form>
-				<!-- 編集フォーム -->
 
 			</div><!-- /.col- -->
 		</div><!-- /.row -->
