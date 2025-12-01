@@ -1,5 +1,6 @@
 package com.example.app.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -105,5 +106,28 @@ public class MaterialServiceImpl implements MaterialService {
 	public void updateBorrowStatus(Integer materialId, boolean borrow) {
 		mapper.updateBorrow(Map.of("id", materialId, "borrow", borrow ? 1 : 0));
 	}
+	
+	// 削除済み教材一覧(status='DEL')
+	
+	// 削除済み教材一覧(ページネーション付き)
+	@Override
+  public List<Material> getDeletedMaterialListByPage(int page, int numPerPage) {
+      int offset = (page - 1) * numPerPage;
+      List<Material> list = mapper.selectDeletedMaterialsByPage(offset, numPerPage);
+      return list != null ? list : new ArrayList<>();
+  }
+	
+	// 削除済み教材の件数
+	@Override
+  public int getDeletedTotalPages(int numPerPage) {
+      int total = mapper.countDeletedMaterials();
+      return (int) Math.ceil((double) total / numPerPage);
+  }
+	
+	// 削除済み教材を元に戻す('DEL'→'ACT')
+	@Override
+  public void restoreMaterial(Integer id) {
+      mapper.restoreMaterial(id);
+  }
 
 }

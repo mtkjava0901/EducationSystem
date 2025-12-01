@@ -183,5 +183,38 @@ public class MaterialController {
 		rd.addFlashAttribute("statusMessage", "教材を削除しました");
 		return "redirect:/admin/material/list";
 	}
+	
+	// 削除済み教材一覧ページ(deleted)
+	@GetMapping("/deleted")
+	public String showDeletedMaterialList(
+			@RequestParam(name = "page", defaultValue = "1") int page,
+			Model model) {
+
+		// セッションからAdminユーザー取得
+		Admin admin = (Admin) session.getAttribute("admin");
+		if (admin != null) {
+			model.addAttribute("username", admin.getName()); // 名前を渡す
+		}
+		
+		// ページネーション付き削除済み教材一覧
+		List<Material> deletedMaterials = materialService.getDeletedMaterialListByPage(page, NUM_PER_PAGE);
+		model.addAttribute("list", deletedMaterials);
+		// modelに"page"と"totalPages"を入れdeletedに送る
+		model.addAttribute("page", page);
+		model.addAttribute("totalPages", materialService.getDeletedTotalPages(NUM_PER_PAGE));
+
+		return "admin/material/deleted";
+	}
+	
+	// 'DEL'→'ACT'処理
+	@GetMapping("/restore/{id}")
+	public String restoreMaterial(
+      @PathVariable Integer id,
+      RedirectAttributes rd) {
+
+  materialService.restoreMaterial(id);
+  rd.addFlashAttribute("statusMessage", "教材を復活させました。");
+  return "redirect:/admin/material/deleted";
+}
 
 }

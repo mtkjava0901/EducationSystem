@@ -41,5 +41,17 @@ public interface StudentService {
 
 	// DBのStudentを1件取得、パスワードが一致するかチェック
 	Student findByLoginId(String loginId);
+	
+	// 削除済み生徒一覧
+	List<Student> getDeletedStudentList();
+	
+	// 削除済み生徒のページ毎取得
+	List<Student> getDeletedStudentListByPage(int page, int numPerPage);
+		
+	// 削除済み生徒の総ページ数取得
+	int getDeletedTotalPages(int numPerPage);
+	
+	// 削除済み生徒復活
+	void restoreStudent(Integer id);
 
 }

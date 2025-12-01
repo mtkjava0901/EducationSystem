@@ -52,6 +52,7 @@ public class StudentLoginController {
 			Model model) {
 		// System.out.println(errors);
 
+		// 認証失敗時にはerrorsがセットされる
 		Student student = service.authenticateStudent(form.getLoginId(), form.getLoginPass(), errors);
 
 		if (errors.hasErrors()) {

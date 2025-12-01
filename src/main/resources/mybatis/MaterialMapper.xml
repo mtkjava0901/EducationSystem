@@ -153,4 +153,31 @@
 		WHERE id = #{id}
 	</update>
 
+	<!-- 削除済み教材一覧(status='DEL') -->
+	<select id="selectDeletedMaterialsByPage" resultMap="material">
+		<include refid="joinSelect" />
+		WHERE materials.status = 'DEL'
+		ORDER BY materials.created DESC
+		LIMIT
+		#{limit} OFFSET #{offset}
+	</select>
+
+	<!-- 削除済み教材一覧(ページネーション付き) -->
+
+	<!-- 削除済み教材の件数 -->
+	<select id="countDeletedMaterials" resultType="int">
+		SELECT COUNT(*)
+		FROM materials
+		WHERE status = 'DEL'
+	</select>
+
+	<!-- 削除済み教材を元に戻す('DEL'→'ACT') -->
+	<update id="restoreMaterial" parameterType="int">
+		UPDATE materials
+		SET
+		status = 'ACT'
+		WHERE id = #{id}
+	</update>
+
+
 </mapper>

@@ -104,9 +104,10 @@
 		SELECT *
 		FROM students
 		WHERE login_id = #{loginId}
-		AND status ='ACT'
+		AND
+		status ='ACT'
 	</select>
-	
+
 	<!-- DBのStudentを1件取得、パスワードが一致するかチェック -->
 	<select id="findByLoginId" resultType="Student">
 		SELECT *
@@ -115,5 +116,37 @@
 		AND status = 'ACT'
 		LIMIT 1
 	</select>
+
+	<!-- 削除済み生徒一覧 -->
+	<select id="selectDeletedStudents" resultMap="student">
+		<include refid="studentSelect" />
+		WHERE student.status = 'DEL'
+		ORDER BY student.id ASC
+	</select>
+
+	<!-- ページごとの削除済み生徒取得 -->
+	<select id="selectDeletedStudentsByPage" resultMap="student">
+		<include refid="studentSelect" />
+		WHERE student.status = 'DEL'
+		ORDER BY student.id ASC
+		LIMIT #{offset},
+		#{limit}
+	</select>
+
+	<!-- 削除済み生徒総数 -->
+	<select id="countDeleted" resultType="long">
+		SELECT COUNT(*)
+		FROM
+		students
+		WHERE status = 'DEL'
+	</select>
+
+	<!-- 削除済み生徒復活 -->
+	<update id="restoreStudent" parameterType="int">
+		UPDATE students
+		SET status = 'ACT'
+		WHERE id = #{id}
+	</update>
+
 
 </mapper>

@@ -48,4 +48,16 @@ public interface MaterialService {
 	
 	// borrowフラグ更新
 	void updateBorrowStatus(Integer materialId, boolean borrow);
+	
+	// 削除済み教材一覧(status='DEL')
+	
+	// 削除済み教材一覧(ページネーション付き)
+	List<Material> getDeletedMaterialListByPage(int page, int numPerPage);
+	
+	// 削除済み教材の件数
+	int getDeletedTotalPages(int numPerPage);
+	
+	// 削除済み教材を元に戻す('DEL'→'ACT')
+	void restoreMaterial(Integer id);
+	
 }
