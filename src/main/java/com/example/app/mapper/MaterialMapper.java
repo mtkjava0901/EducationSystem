@@ -58,8 +58,18 @@ public interface MaterialMapper {
 
 	// borrowフラグ更新(貸出/返却)
 	void updateBorrow(Map<String, Object> params);
-}
 
-// 教材倫理削除(statusを'DEL'に変更、安全に扱えるように)(未使用)
-// @Update("UPDATE materials SET status = 'DEL' WHERE id = #{id}")
-// int setChangeByStatus(@Param("id") Integer id);
+	// 削除済み教材一覧(status='DEL')
+	List<Material> selectDeletedMaterials();
+	
+	// 削除済み教材一覧(ページネーション付き)
+	List<Material> selectDeletedMaterialsByPage(
+			@Param("offset") int offset, @Param("limit") int limit);
+	
+	// 削除済み教材の件数
+	int countDeletedMaterials();
+	
+	// 削除済み教材を元に戻す('DEL'→'ACT')
+	void restoreMaterial(Integer id);
+
+}

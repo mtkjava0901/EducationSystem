@@ -77,7 +77,7 @@ public class StudentServiceImpl implements StudentService {
 	// パスワード認証
 	@Override
 	public boolean isCorrectIdAndPassword(String loginId, String loginPass) {
-		// ↓これが上手く働いていない？(11/27修正中)
+		// findByLoginId内でstatus='ACT'の生徒しか取得していない = 'DEL'削除済みユーザーは取得していない
 		Student student = mapper.findByLoginId(loginId);
 
 		if (student == null)
