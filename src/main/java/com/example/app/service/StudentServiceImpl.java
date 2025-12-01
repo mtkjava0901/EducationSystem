@@ -96,5 +96,31 @@ public class StudentServiceImpl implements StudentService {
 		Student student = mapper.selectByLoginId(loginId);
 		return (student != null) ? student.getLoginPass() : null;
 	}
+	
+	// 削除済み生徒一覧
+	@Override
+  public List<Student> getDeletedStudentList() {
+      return mapper.selectDeletedStudents();
+  }
+	
+	// 削除済み生徒のページ毎取得
+	@Override
+  public List<Student> getDeletedStudentListByPage(int page, int numPerPage) {
+      int offset = numPerPage * (page - 1);
+      return mapper.selectDeletedStudentsByPage(offset, numPerPage);
+  }
+	
+	// 削除済み生徒の総ページ数取得
+	@Override
+  public int getDeletedTotalPages(int numPerPage) {
+      double totalNum = (double) mapper.countDeleted();
+      return (int) Math.ceil(totalNum / numPerPage);
+  }
+	
+	// 削除済み生徒復活
+	@Override
+  public void restoreStudent(Integer id) {
+      mapper.restoreStudent(id);
+  }
 
 }

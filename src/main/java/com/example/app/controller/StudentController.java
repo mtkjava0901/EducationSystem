@@ -142,7 +142,7 @@ public class StudentController {
 			@PathVariable Integer id,
 			RedirectAttributes rd) {
 		service.deleteStudent(id);
-		rd.addFlashAttribute("statusMessage", "教材を削除しました");
+		rd.addFlashAttribute("statusMessage", "生徒を削除しました");
 		return "redirect:/admin/student/list";
 	}
 
@@ -151,8 +151,43 @@ public class StudentController {
 			@PathVariable Integer id,
 			RedirectAttributes rd) {
 		service.deleteStudent(id);
-		rd.addFlashAttribute("statusMessage", "教材を削除しました");
+		rd.addFlashAttribute("statusMessage", "生徒を削除しました");
 		return "redirect:/admin/student/list";
+	}
+	
+	// 削除済み生徒一覧ページ
+	@GetMapping("/deleted")
+	public String deletedStudentList(
+	        @RequestParam(name = "page", defaultValue = "1") Integer page,
+	        Model model) {
+
+	    List<Student> students = service.getDeletedStudentListByPage(page, NUM_PER_PAGE);
+	    if (students == null) {
+	        students = new ArrayList<>();
+	    }
+
+	    // セッションからAdminユーザー取得
+	    Admin admin = (Admin) session.getAttribute("admin");
+	    if (admin != null) {
+	        model.addAttribute("username", admin.getName());
+	    }
+
+	    model.addAttribute("list", students);
+	    model.addAttribute("page", page);
+	    model.addAttribute("totalPages", service.getDeletedTotalPages(NUM_PER_PAGE));
+
+	    return "admin/student/deleted"; // 新しいテンプレート名
+	}
+	
+	// 削除済み生徒復活(post)
+	@PostMapping("/restore/{id}")
+	public String restoreStudent(
+	        @PathVariable Integer id,
+	        RedirectAttributes rd) {
+
+	    service.restoreStudent(id);
+	    rd.addFlashAttribute("statusMessage", "生徒を復活させました。");
+	    return "redirect:/admin/student/deleted";
 	}
 
 }

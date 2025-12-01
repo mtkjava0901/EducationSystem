@@ -46,5 +46,18 @@ public interface StudentMapper {
 	
 	// DBのStudentを1件取得、パスワードが一致するかチェック
 	Student findByLoginId(@Param("loginId") String loginId);
+	
+	// 削除済み生徒一覧
+	List<Student> selectDeletedStudents();
+	
+	// ページごとの削除済み生徒取得
+	List<Student> selectDeletedStudentsByPage(@Param("offset") int offset,
+      @Param("limit") int limit);
+	
+	// 削除済み生徒取得
+	Long countDeleted();
+	
+	// 削除済み生徒復活
+	void restoreStudent(@Param("id") Integer id);
 
 }

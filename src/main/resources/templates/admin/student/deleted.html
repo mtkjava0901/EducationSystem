@@ -1,10 +1,115 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+	<link th:href="@{/css/style.css}" rel="stylesheet">
+	<title>教材管理システム</title>
 </head>
+
 <body>
-<h1>削除済み生徒一覧</h1>
+	<header>
+		<nav class="navbar navbar-light bg-light">
+			<div class="container">
+				<a class="navbar-brand" href="">教材管理システム</a>
+				<ul class="navbar-nav">
+					<li class="nav-item">
+						<span th:text="${username}">(アカウント名)</span>
+						[<a href="">ログアウト</a>]
+					</li>
+				</ul>
+			</div>
+		</nav>
+	</header>
+	<div class="container">
+
+		<h1 class="my-4 h3">削除済み生徒一覧</h1>
+
+		<div class="row">
+			<div class="col">
+				<p>
+					<a th:href="@{/admin/student/deleted}" class="btn btn-outline-primary">削除済み生徒一覧</a>
+					<a th:href="@{/admin/material/list}" class="btn btn-light">視聴覚教材リスト</a>
+					<a th:href="@{/admin/student/list}" class="btn btn-light">生徒リスト</a>
+					<a th:href="@{/admin/material/deleted}" class="btn btn-outline-secondary">削除済み教材一覧</a>
+				</p>
+
+				<!-- フラッシュメッセージ欄 -->
+				<div th:if="${statusMessage}" class="alert alert-success" role="alert">
+					<span th:text="${statusMessage}"></span>
+				</div>
+				<!-- フラッシュメッセージ欄 -->
+
+				<!-- 生徒テーブル -->
+				<table class="table table-bordered">
+					<tr>
+						<th>ログインID</th>
+						<th>氏名</th>
+						<th>生年月日</th>
+						<th>操作</th>
+					</tr>
+					<tr th:each="student : ${list}">
+						<td>[[ ${student.loginId} ]]</td>
+						<td>[[ ${student.name} ]]</td>
+						<td>[[ ${#temporals.format(student.birthday, 'yyyy年MM月dd日')} ]]</td>
+						<td>
+							<form th:action="@{/admin/student/restore/{id}(id=${student.id})}" method="post"
+								onsubmit="return confirm('復活させますか？');">
+								<button type="submit" class="btn btn-success btn-sm">元に戻す</button>
+							</form>
+						</td>
+					</tr>
+				</table>
+				<!-- 生徒テーブル -->
+
+				<!-- ページネーション -->
+
+				<div th:if="${totalPages >= 2}" class="container">
+					<ul class="pagination">
+						<!-- 前のページへ -->
+						<th:block th:switch="${page}">
+							<li th:case="1" class="page-item disabled">
+								<a class="page-link" href="">&laquo;</a>
+							</li>
+							<li th:case="*" class="page-item">
+								<a class="page-link" th:href="@{/admin/student/deleted(page=${page - 1})}">&laquo;</a>
+							</li>
+						</th:block>
+						<!-- ページ番号 -->
+						<th:block th:each="index : ${#numbers.sequence(1, totalPages)}">
+							<th:block th:switch="${index}">
+								<li th:case="${page}" class="page-item active">
+									<a class="page-link" href="">[[ ${index} ]]</a>
+								</li>
+								<li th:case="*" class="page-item">
+									<a class="page-link" th:href="@{/admin/student/deleted(page=${index})}">[[ ${index}
+										]]</a>
+								</li>
+							</th:block>
+						</th:block>
+						<!-- 次のページへ -->
+						<th:block th:switch="${page}">
+							<li th:case="${totalPages}" class="page-item disabled">
+								<a class="page-link" href="">&raquo;</a>
+							</li>
+							<li th:case="*" class="page-item">
+								<a class="page-link" th:href="@{/admin/student/deleted(page=${page + 1})}">&raquo;</a>
+							</li>
+						</th:block>
+					</ul>
+				</div>
+
+				<!-- ページネーション -->
+
+			</div><!-- /.col- -->
+		</div><!-- /.row -->
+
+	</div><!-- /.container -->
+	<script th:src="@{/js/jquery-3.6.1.min.js}"></script>
+	<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+	<script th:src="@{/js/button-action.js}"></script>
 </body>
+
 </html>
